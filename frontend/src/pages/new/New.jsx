@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import SidebarManager from "../../components/sidebar/SidebarManager"
 const New = ({ inputs, title, handleAdd, location }) => {
   const [data, setData] = useState({})
+  const [errors, setErrors] = useState([])
 
   const handleInput = (e) => {
     const id = e.target.id;
@@ -16,6 +17,24 @@ const New = ({ inputs, title, handleAdd, location }) => {
 
   const handleAddItem = (e) => {
     e.preventDefault()
+    
+    const validationErrors = [];
+
+    // Validate required fields
+    inputs.forEach(input => {
+      if (!data[input.id] || data[input.id].trim() === '') {
+        validationErrors.push(`${input.label} không được để trống`);
+      }
+    });
+
+    if (validationErrors.length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    // Clear errors if validation passes
+    setErrors([]);
+
     handleAdd(data)
     window.location.replace(location)
   }
@@ -31,6 +50,13 @@ const New = ({ inputs, title, handleAdd, location }) => {
         <div className="bottom">
           
           <div className="right">
+            {errors.length > 0 && (
+              <div style={{ color: 'red', marginBottom: '20px' }}>
+                {errors.map((error, index) => (
+                  <div key={index}>{error}</div>
+                ))}
+              </div>
+            )}
             <form onSubmit={handleAddItem}>
 
               {inputs.map((input) => (

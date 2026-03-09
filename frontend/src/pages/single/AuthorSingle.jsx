@@ -10,20 +10,37 @@ import SidebarManager from "../../components/sidebar/SidebarManager"
 const AuthorSingle = () => {
   const [data, setData] = useState({})
   const { id } = useParams()
-  const [error, setError] = useState(false)
+  const [errors, setErrors] = useState([])
 
   const handleCancel = () => {
     window.location.replace("/authors")
   }
 
   const handleSave = () => {
+    const validationErrors = [];
+
+    // Validate required field
+    if (!data.name || data.name.trim() === '') {
+      validationErrors.push('Tên tác giả không được để trống');
+    }
+
+    if (validationErrors.length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    // Clear errors if validation passes
+    setErrors([]);
+
     updateAuthor(data).then(res => {
       if (res.status === 200) {
         window.location.replace("/authors")
       }
       else {
-        setError(true)
+        setErrors(['Có lỗi xảy ra khi cập nhật tác giả. Vui lòng thử lại.']);
       }
+    }).catch(err => {
+      setErrors(['Có lỗi xảy ra khi cập nhật tác giả. Vui lòng thử lại.']);
     })
   }
 
@@ -44,7 +61,13 @@ const AuthorSingle = () => {
             <div className="function spacing">
               <h3>Update Author</h3>
               <div className="btn-list">
-                {error && <span style={{ color: 'red', marginRight: '20px' }}>Error</span>}
+                {errors.length > 0 && (
+                  <div style={{ color: 'red', marginRight: '20px' }}>
+                    {errors.map((error, index) => (
+                      <div key={index}>{error}</div>
+                    ))}
+                  </div>
+                )}
                 <button onClick={handleCancel} className="cancel">Cancel</button>
                 <button onClick={handleSave} className="save">Save</button>
               </div>

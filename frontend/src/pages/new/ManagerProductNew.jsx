@@ -26,7 +26,7 @@ const ManagerProductNew = () => {
     const [authors, setAuthors] = useState([])
     const [languages, setLanguages] = useState([])
     const [categories, setCategories] = useState([])
-    const [error, setError] = useState(false)
+    const [errors, setErrors] = useState([])
     const [data, setData] = useState({
         title: '',
         description: '',
@@ -138,14 +138,81 @@ const ManagerProductNew = () => {
 
     const handleAdd = () => {
         try {
-            if (data.title.trim() === '' || data.publisher.id === '' || data.authors.length === 0 || data.collections.length === 0 || data.isbn.trim() === '' || data.images[0].link.trim() === '' || data.language.id === '' || data.category.id === '' || data.page === 0 || data.stock === 0 || data.weight === 0 || data.size.trim() === '' || data.cover.trim() === '' || data.price === 0) {
-                setError(true)
-                return
+            const validationErrors = [];
+
+            // Validate required fields
+            if (!data.title || data.title.trim() === '') {
+                validationErrors.push('Tên sách không được để trống');
             }
-            if( parseInt(data.price) < 0 || parseInt(data.page) < 0 || parseInt(data.stock) < 0 || parseInt(data.weight) < 0 || parseFloat(data.discount) < 0){
-                setError(true)
-                return
+            if (!data.isbn || data.isbn.trim() === '') {
+                validationErrors.push('ISBN không được để trống');
             }
+            if (!data.publisher.id) {
+                validationErrors.push('Vui lòng chọn nhà xuất bản');
+            }
+            if (!data.authors || data.authors.length === 0) {
+                validationErrors.push('Vui lòng chọn ít nhất một tác giả');
+            }
+            if (!data.collections || data.collections.length === 0) {
+                validationErrors.push('Vui lòng chọn ít nhất một bộ sưu tập');
+            }
+            if (!data.images[0].link || data.images[0].link.trim() === '') {
+                validationErrors.push('URL hình ảnh không được để trống');
+            }
+            if (!data.language.id) {
+                validationErrors.push('Vui lòng chọn ngôn ngữ');
+            }
+            if (!data.category.id) {
+                validationErrors.push('Vui lòng chọn danh mục');
+            }
+            if (!data.size || data.size.trim() === '') {
+                validationErrors.push('Kích thước không được để trống');
+            }
+            if (!data.cover || data.cover.trim() === '') {
+                validationErrors.push('Loại bìa không được để trống');
+            }
+
+            // Validate numeric fields
+            if (!data.page || data.page === 0) {
+                validationErrors.push('Số trang phải lớn hơn 0');
+            }
+            if (!data.stock || data.stock === 0) {
+                validationErrors.push('Số lượng tồn kho phải lớn hơn 0');
+            }
+            if (!data.weight || data.weight === 0) {
+                validationErrors.push('Trọng lượng phải lớn hơn 0');
+            }
+            if (!data.price || data.price === 0) {
+                validationErrors.push('Giá phải lớn hơn 0');
+            }
+
+            // Validate positive values
+            if (parseInt(data.price) < 0) {
+                validationErrors.push('Giá không được âm');
+            }
+            if (parseInt(data.page) < 0) {
+                validationErrors.push('Số trang không được âm');
+            }
+            if (parseInt(data.stock) < 0) {
+                validationErrors.push('Số lượng tồn kho không được âm');
+            }
+            if (parseInt(data.weight) < 0) {
+                validationErrors.push('Trọng lượng không được âm');
+            }
+            if (parseFloat(data.discount) < 0) {
+                validationErrors.push('Giảm giá không được âm');
+            }
+            if (parseFloat(data.discount) > 100) {
+                validationErrors.push('Giảm giá không được vượt quá 100%');
+            }
+
+            if (validationErrors.length > 0) {
+                setErrors(validationErrors);
+                return;
+            }
+
+            // Clear errors if validation passes
+            setErrors([]);
             
             const bookData = {
                 ...data,
@@ -160,12 +227,12 @@ const ManagerProductNew = () => {
             addBook(bookData).then(res => {
                 navigate('/manager/products')
             }).catch(err => {
-                setError(true)
+                setErrors(['Có lỗi xảy ra khi thêm sản phẩm. Vui lòng thử lại.']);
                 console.log(err)
             })
         }
         catch (err) {
-            setError(true)
+            setErrors(['Có lỗi không xác định xảy ra. Vui lòng thử lại.']);
             return
         }
     }
@@ -183,7 +250,13 @@ const ManagerProductNew = () => {
                     <div className="function spacing">
                         <h3>Add New Product</h3>
                         <div className="btn-list">
-                            {error && <span style={{ color: 'red', marginRight: '20px' }}>Error</span>}
+                            {errors.length > 0 && (
+                                <div style={{ color: 'red', marginRight: '20px' }}>
+                                    {errors.map((error, index) => (
+                                        <div key={index}>{error}</div>
+                                    ))}
+                                </div>
+                            )}
                             <button onClick={handleCancel} className="cancel">Cancel</button>
                             <button onClick={handleAdd} className="save">Add</button>
                         </div>

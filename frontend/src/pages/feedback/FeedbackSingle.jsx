@@ -15,15 +15,32 @@ const FeedbackSingle = () => {
     const location = useLocation()
     const isManager = location.pathname.startsWith('/manager')
     const basePath = isManager ? '/manager/feedbacks' : '/feedbacks'
-    const [error, setError] = useState(false)
+    const [errors, setErrors] = useState([])
 
     const handleCancel = () => {
         window.location.replace(basePath)
     }
 
     const handleSave = () => {
+        const validationErrors = [];
+
+        // Validate required field
+        if (!data.answer || data.answer.trim() === '') {
+            validationErrors.push('Câu trả lời không được để trống');
+        }
+
+        if (validationErrors.length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+
+        // Clear errors if validation passes
+        setErrors([]);
+
         answerFeedback(data).then((res) => {
             window.location.replace(basePath)
+        }).catch(err => {
+            setErrors(['Có lỗi xảy ra khi trả lời phản hồi. Vui lòng thử lại.']);
         })
     }
 
@@ -43,7 +60,13 @@ const FeedbackSingle = () => {
                         <div className="function spacing">
                             <h3>Answer Feedback</h3>
                             <div className="btn-list">
-                                {error && <span style={{ color: 'red', marginRight: '20px' }}>Error</span>}
+                                {errors.length > 0 && (
+                                    <div style={{ color: 'red', marginRight: '20px' }}>
+                                        {errors.map((error, index) => (
+                                            <div key={index}>{error}</div>
+                                        ))}
+                                    </div>
+                                )}
                                 <button onClick={handleCancel} className="cancel">Cancel</button>
                                 <button onClick={handleSave} className="save">Save</button>
                             </div>

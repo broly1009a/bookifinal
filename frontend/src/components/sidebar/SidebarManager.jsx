@@ -101,7 +101,7 @@ const SidebarManager = () => {
           </li>
         </ul>
       </div>
-      <div className="bottom">
+      {/* <div className="bottom">
         <p className="theme-title">Theme</p>
         <div className="theme-options">
           <div
@@ -113,7 +113,7 @@ const SidebarManager = () => {
             onClick={() => dispatch({ type: "DARK" })}
           ></div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

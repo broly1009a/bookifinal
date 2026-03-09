@@ -77,7 +77,7 @@ const Navbar = () => {
           <SearchOutlinedIcon className="search-icon" />
         </div>
         <div className="items">
-          <div className="item" title="Toggle Dark Mode">
+          {/* <div className="item" title="Toggle Dark Mode">
             {darkMode ? (
               <LightModeOutlinedIcon
                 className="icon"
@@ -89,9 +89,9 @@ const Navbar = () => {
                 onClick={() => dispatch({ type: "DARK" })}
               />
             )}
-          </div>
+          </div> */}
           
-          <div className="item notification-item" onClick={() => setShowNotifications(!showNotifications)}>
+          {/* <div className="item notification-item" onClick={() => setShowNotifications(!showNotifications)}>
             <NotificationsNoneOutlinedIcon className="icon" />
             <div className="counter">3</div>
             {showNotifications && (
@@ -113,12 +113,12 @@ const Navbar = () => {
                 </div>
               </div>
             )}
-          </div>
+          </div> */}
           
-          <div className="item">
+          {/* <div className="item">
             <ChatBubbleOutlineOutlinedIcon className="icon" />
             <div className="counter">2</div>
-          </div>
+          </div> */}
           
           <div className="item profile-item" ref={profileRef} onClick={() => setShowProfileDropdown(!showProfileDropdown)}>
             <img

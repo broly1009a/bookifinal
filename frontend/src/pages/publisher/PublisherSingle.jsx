@@ -9,24 +9,40 @@ import TextField from '@mui/material/TextField';
 const PublisherSingle = () => {
     const [data, setData] = useState({})
     const { id } = useParams()
-    const [error, setError] = useState(false)
+    const [errors, setErrors] = useState([])
 
     const handleCancel = () => {
         window.location.replace("/publishers")
     }
 
     const handleSave = () => {
-        if (data.name.trim() === '' || data.website.trim() === ''){
-            setError(true)
-            return
+        const validationErrors = [];
+
+        // Validate required fields
+        if (!data.name || data.name.trim() === '') {
+            validationErrors.push('Tên nhà xuất bản không được để trống');
         }
+        if (!data.website || data.website.trim() === '') {
+            validationErrors.push('Website không được để trống');
+        }
+
+        if (validationErrors.length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+
+        // Clear errors if validation passes
+        setErrors([]);
+
         updatePublisher(data).then(res => {
             if (res.status === 200) {
                 window.location.replace("/publishers")
             }
             else {
-                setError(true)
+                setErrors(['Có lỗi xảy ra khi cập nhật nhà xuất bản. Vui lòng thử lại.']);
             }
+        }).catch(err => {
+            setErrors(['Có lỗi xảy ra khi cập nhật nhà xuất bản. Vui lòng thử lại.']);
         })
     }
 
@@ -47,7 +63,13 @@ const PublisherSingle = () => {
                         <div className="function spacing">
                             <h3>Update Publisher</h3>
                             <div className="btn-list">
-                                {error && <span style={{ color: 'red', marginRight: '20px' }}>Error</span>}
+                                {errors.length > 0 && (
+                                    <div style={{ color: 'red', marginRight: '20px' }}>
+                                        {errors.map((error, index) => (
+                                            <div key={index}>{error}</div>
+                                        ))}
+                                    </div>
+                                )}
                                 <button onClick={handleCancel} className="cancel">Cancel</button>
                                 <button onClick={handleSave} className="save">Save</button>
                             </div>

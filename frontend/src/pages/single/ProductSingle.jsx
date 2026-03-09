@@ -29,7 +29,7 @@ const ProductSingle = () => {
     const [languages, setLanguages] = useState([])
     const [categories, setCategories] = useState([])
     const { productId } = useParams()
-    const [error, setError] = useState(false)
+    const [errors, setErrors] = useState([])
     const navigate = useNavigate()
     const location = useLocation()
     const isAdminRoute = location.pathname.startsWith('/admin/')
@@ -121,15 +121,49 @@ const ProductSingle = () => {
 
     const handleSave = () => {
         try {
-            if( parseInt(data.price) < 0 || parseInt(data.page) < 0 || parseInt(data.stock) < 0 || parseInt(data.weight) < 0 || parseFloat(data.discount) < 0 || parseFloat(data.discount) > 1){
-                setError(true)
-                return
+            const validationErrors = [];
+
+            // Validate required fields
+            if (!data.title || data.title.trim() === '') {
+                validationErrors.push('Tên sách không được để trống');
+            }
+            if (!data.isbn || data.isbn.trim() === '') {
+                validationErrors.push('ISBN không được để trống');
+            }
+            if (!data.size || data.size.trim() === '') {
+                validationErrors.push('Kích thước không được để trống');
+            }
+            if (!data.cover || data.cover.trim() === '') {
+                validationErrors.push('Loại bìa không được để trống');
             }
 
-            if (data.title.trim() === '' || data.isbn.trim() === '' || data.size.trim() === '' || data.cover.trim() === '') {
-                setError(true)
-                return
+            // Validate positive values
+            if (parseInt(data.price) < 0) {
+                validationErrors.push('Giá không được âm');
             }
+            if (parseInt(data.page) < 0) {
+                validationErrors.push('Số trang không được âm');
+            }
+            if (parseInt(data.stock) < 0) {
+                validationErrors.push('Số lượng tồn kho không được âm');
+            }
+            if (parseInt(data.weight) < 0) {
+                validationErrors.push('Trọng lượng không được âm');
+            }
+            if (parseFloat(data.discount) < 0) {
+                validationErrors.push('Giảm giá không được âm');
+            }
+            if (parseFloat(data.discount) > 1) {
+                validationErrors.push('Giảm giá không được vượt quá 100% (nhập 0.1 cho 10%)');
+            }
+
+            if (validationErrors.length > 0) {
+                setErrors(validationErrors);
+                return;
+            }
+
+            // Clear errors if validation passes
+            setErrors([]);
 
             const bookData = {
                 ...data,
@@ -143,12 +177,12 @@ const ProductSingle = () => {
             updateBook(productId, bookData).then(res => {
                 navigate(isAdminRoute ? "/admin/products" : "/products")
             }).catch(err => {
-                setError(true)
+                setErrors(['Có lỗi xảy ra khi cập nhật sản phẩm. Vui lòng thử lại.']);
                 console.log(err)
             })
         }
         catch (err) {
-            setError(true)
+            setErrors(['Có lỗi không xác định xảy ra. Vui lòng thử lại.']);
             return
         }
     }
@@ -164,7 +198,13 @@ const ProductSingle = () => {
                     <div className="function spacing">
                         <h3>Update product</h3>
                         <div className="btn-list">
-                            {error && <span style={{color: 'red', marginRight: '20px'}}>Error</span>}
+                            {errors.length > 0 && (
+                                <div style={{ color: 'red', marginRight: '20px' }}>
+                                    {errors.map((error, index) => (
+                                        <div key={index}>{error}</div>
+                                    ))}
+                                </div>
+                            )}
                             <button onClick={handleCancel} className="cancel">Cancel</button>
                             <button onClick={handleSave} className="save">Save</button>
                         </div>

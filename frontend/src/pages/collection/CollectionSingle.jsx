@@ -9,21 +9,41 @@ import TextField from '@mui/material/TextField';
 const CollectionSingle = () => {
     const [data, setData] = useState({})
     const { id } = useParams()
-    const [error, setError] = useState(false)
+    const [errors, setErrors] = useState([])
 
     const handleCancel = () => {
         window.location.replace("/collections")
     }
 
     const handleSave = () => {
+        const validationErrors = [];
+
+        // Validate required fields
+        if (!data.name || data.name.trim() === '') {
+            validationErrors.push('Tên bộ sưu tập không được để trống');
+        }
+        if (!data.type || data.type.trim() === '') {
+            validationErrors.push('Loại bộ sưu tập không được để trống');
+        }
+
+        if (validationErrors.length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+
+        // Clear errors if validation passes
+        setErrors([]);
+
         data.isDisplay = Boolean(data.isDisplay == 'true');
         updateCollection(data).then(res => {
             if (res.status === 200) {
                 window.location.replace("/collections")
             }
             else {
-                setError(true)
+                setErrors(['Có lỗi xảy ra khi cập nhật bộ sưu tập. Vui lòng thử lại.']);
             }
+        }).catch(err => {
+            setErrors(['Có lỗi xảy ra khi cập nhật bộ sưu tập. Vui lòng thử lại.']);
         })
     }
 
@@ -43,7 +63,13 @@ const CollectionSingle = () => {
                         <div className="function spacing">
                             <h3>Update Collection</h3>
                             <div className="btn-list">
-                                {error && <span style={{ color: 'red', marginRight: '20px' }}>Error</span>}
+                                {errors.length > 0 && (
+                                    <div style={{ color: 'red', marginRight: '20px' }}>
+                                        {errors.map((error, index) => (
+                                            <div key={index}>{error}</div>
+                                        ))}
+                                    </div>
+                                )}
                                 <button onClick={handleCancel} className="cancel">Cancel</button>
                                 <button onClick={handleSave} className="save">Save</button>
                             </div>

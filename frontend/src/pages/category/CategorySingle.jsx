@@ -13,24 +13,37 @@ const CategorySingle = () => {
     const location = useLocation()
     const isManager = location.pathname.startsWith('/manager')
     const basePath = isManager ? '/manager/categories' : '/categories'
-    const [error, setError] = useState(false)
+    const [errors, setErrors] = useState([])
 
     const handleCancel = () => {
         window.location.replace(basePath)
     }
 
     const handleSave = () => {
-        if (data.name.trim() === ''){
-            setError(true)
-            return
+        const validationErrors = [];
+
+        // Validate required field
+        if (!data.name || data.name.trim() === '') {
+            validationErrors.push('Tên danh mục không được để trống');
         }
+
+        if (validationErrors.length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+
+        // Clear errors if validation passes
+        setErrors([]);
+
         updateCategory(data).then(res => {
             if (res.status === 200) {
                 window.location.replace(basePath)
             }
             else {
-                setError(true)
+                setErrors(['Có lỗi xảy ra khi cập nhật danh mục. Vui lòng thử lại.']);
             }
+        }).catch(err => {
+            setErrors(['Có lỗi xảy ra khi cập nhật danh mục. Vui lòng thử lại.']);
         })
     }
 
@@ -50,7 +63,13 @@ const CategorySingle = () => {
                         <div className="function spacing">
                             <h3>Update Category</h3>
                             <div className="btn-list">
-                                {error && <span style={{ color: 'red', marginRight: '20px' }}>Error</span>}
+                                {errors.length > 0 && (
+                                    <div style={{ color: 'red', marginRight: '20px' }}>
+                                        {errors.map((error, index) => (
+                                            <div key={index}>{error}</div>
+                                        ))}
+                                    </div>
+                                )}
                                 <button onClick={handleCancel} className="cancel">Cancel</button>
                                 <button onClick={handleSave} className="save">Save</button>
                             </div>

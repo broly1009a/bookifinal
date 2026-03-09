@@ -10,7 +10,7 @@ import SidebarSale from "../../components/sidebar/SidebarSale"
 const PostSingle = () => {
     const [data, setData] = useState({})
     const { id } = useParams()
-    const [error, setError] = useState(false)
+    const [errors, setErrors] = useState([])
     const [categories, setCategories] = useState([])
 
     const handleCancel = () => {
@@ -18,13 +18,39 @@ const PostSingle = () => {
     }
 
     const handleSave = () => {
+        const validationErrors = [];
+
+        // Validate required fields
+        if (!data.title || data.title.trim() === '') {
+            validationErrors.push('Tiêu đề không được để trống');
+        }
+        if (!data.brief || data.brief.trim() === '') {
+            validationErrors.push('Tóm tắt không được để trống');
+        }
+        if (!data.thumbnail || data.thumbnail.trim() === '') {
+            validationErrors.push('Thumbnail không được để trống');
+        }
+        if (!data.content || data.content.trim() === '') {
+            validationErrors.push('Nội dung không được để trống');
+        }
+
+        if (validationErrors.length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+
+        // Clear errors if validation passes
+        setErrors([]);
+
         updatePost(data).then(res => {
             if (res.status === 200) {
                 window.location.replace("/posts")
             }
             else {
-                setError(true)
+                setErrors(['Có lỗi xảy ra khi cập nhật bài viết. Vui lòng thử lại.']);
             }
+        }).catch(err => {
+            setErrors(['Có lỗi xảy ra khi cập nhật bài viết. Vui lòng thử lại.']);
         })
     }
 
@@ -60,7 +86,13 @@ const PostSingle = () => {
                         <div className="function spacing">
                             <h3>Update Posts</h3>
                             <div className="btn-list">
-                                {error && <span style={{ color: 'red', marginRight: '20px' }}>Error</span>}
+                                {errors.length > 0 && (
+                                    <div style={{ color: 'red', marginRight: '20px' }}>
+                                        {errors.map((error, index) => (
+                                            <div key={index}>{error}</div>
+                                        ))}
+                                    </div>
+                                )}
                                 <button onClick={handleCancel} className="cancel">Cancel</button>
                                 <button onClick={handleSave} className="save">Save</button>
                             </div>

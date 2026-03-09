@@ -65,20 +65,20 @@ const Sidebar = () => {
             </li>
           </Link>
           
-          {/* <p className="title">MANAGEMENT</p>
-          <Link to="/admin/authors" style={{ textDecoration: "none" }}>
+          <p className="title">MANAGEMENT</p>
+          {/* <Link to="/admin/authors" style={{ textDecoration: "none" }}>
             <li className={isActive("/admin/authors") ? "active" : ""}>
               <PersonOutlineIcon className="icon" />
               <span>Authors</span>
             </li>
-          </Link>
+          </Link> */}
           <Link to="/admin/products" style={{ textDecoration: "none" }}>
             <li className={isActive("/admin/products") ? "active" : ""}>
               <StoreIcon className="icon" />
               <span>Products</span>
             </li>
           </Link>
-          <Link to="/admin/orders" style={{ textDecoration: "none" }}>
+          {/* <Link to="/admin/orders" style={{ textDecoration: "none" }}>
             <li className={isActive("/admin/orders") ? "active" : ""}>
               <CreditCardIcon className="icon" />
               <span>Orders</span>
@@ -156,7 +156,7 @@ const Sidebar = () => {
           </li>
         </ul>
       </div>
-      <div className="bottom">
+      {/* <div className="bottom">
         <p className="theme-title">Theme</p>
         <div className="theme-options">
           <div
@@ -170,7 +170,7 @@ const Sidebar = () => {
             title="Dark Mode"
           ></div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
