@@ -245,9 +245,11 @@ const Datatable = ({ type, role }) => {
       </div>
       <div className="datatableTitle">
         Manage {type}
-        <Link to={`${role === "ADMIN" ? "/admin" : role === "MANAGER" ? "/manager" : ""}/${type}/new`} className="link">
-          Add New {type}
-        </Link>
+        {role !== "ADMIN" && (
+          <Link to={`${role === "ADMIN" ? "/admin" : role === "MANAGER" ? "/manager" : ""}/${type}/new`} className="link">
+            Add New {type}
+          </Link>
+        )}
       </div>
       <DataGrid
         className="datagrid"
