@@ -186,7 +186,7 @@ const BooksByCollection = () => {
     }, [window.location.search])
     return (
         <>
-            <Breadscrumb />
+            <Breadscrumb label={curCollection ? curCollection.name : "TẤT CẢ SẢN PHẨM"} />
             <div id='PageContaner'>
                 <section id='collection-wrapper'>
                     <div className='container'>

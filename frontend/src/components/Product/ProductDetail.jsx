@@ -13,7 +13,7 @@ import { getFeedbackByBookId } from '../../services/Feedback';
 import { getWishlistByUserId, deleteWishList, addWishList } from '../../services/WishlistService';
 import RelevantProducts from './RelevantProducts';
 import Feedback from './Feedback';
-
+import Breadscrumb from '../Breadscrumb'
 const ProductDetail = ({ cookies, cart, cartChange, setCartChange, profile }) => {
     const [book, setBook] = useState({})
     const [quantity, setQuantity] = useState(1)
@@ -164,6 +164,7 @@ const ProductDetail = ({ cookies, cart, cartChange, setCartChange, profile }) =>
 
     return (
         <div>
+                <Breadscrumb label={book.title} />
             <div id='breadcrumb-wrapper' className='breadcrumb-w-img'>
                 <CollectionHeader />
                 <section id='product-wrapper'>

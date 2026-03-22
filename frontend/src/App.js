@@ -84,6 +84,7 @@ import SaleChangePassword from "./pages/changePass/SaleChangePassword";
 import Customer from "./pages/customer/Customer";
 import Staff from "./pages/staff/Staff";
 import AddStaff from "./components/User/AddStaff";
+import ProfilePage from "./pages/profile/ProfilePage";
 
 // Form inputs and styles
 import { productInputs, authorInputs, userInputs, collectionInputs, sliderInputs, publisherInputs, categoryInputs } from "./formSource";
@@ -247,6 +248,8 @@ function App() {
 
           <Route path="/admin/account-detail" element={<RoleBasedRoute allowedRoles={['ADMIN']}><ProfileDetail cookies={cookies} /></RoleBasedRoute>} />
           
+          <Route path="/admin/profile" element={<RoleBasedRoute allowedRoles={['ADMIN']}><ProfilePage cookies={cookies} /></RoleBasedRoute>} />
+          
           <Route path="/admin/order-state">
             <Route path=":id" element={<RoleBasedRoute allowedRoles={['ADMIN']}><ChangeState /></RoleBasedRoute>} />
           </Route>
@@ -357,6 +360,7 @@ function App() {
           </Route>
           <Route path="/manager/change-password" element={<RoleBasedRoute allowedRoles={['MANAGER']}><ManagerChangePassword /></RoleBasedRoute>} />
           <Route path="/manager/account-detail" element={<RoleBasedRoute allowedRoles={['MANAGER']}><ProfileDetail cookies={cookies} /></RoleBasedRoute>} />
+          <Route path="/manager/profile" element={<RoleBasedRoute allowedRoles={['MANAGER']}><ProfilePage cookies={cookies} /></RoleBasedRoute>} />
 
           {/* Sale Routes */}
           <Route path="/sale" element={<RoleBasedRoute allowedRoles={['SALE']}><SaleHome /></RoleBasedRoute>} />
@@ -371,6 +375,7 @@ function App() {
           </Route>
           <Route path="/sale/change-password" element={<RoleBasedRoute allowedRoles={['SALE']}><SaleChangePassword /></RoleBasedRoute>} />
           <Route path="/sale/account-detail" element={<RoleBasedRoute allowedRoles={['SALE']}><ProfileDetail cookies={cookies} /></RoleBasedRoute>} />
+          <Route path="/sale/profile" element={<RoleBasedRoute allowedRoles={['SALE']}><ProfilePage cookies={cookies} /></RoleBasedRoute>} />
            <Route path="/sale/posts">
             <Route index element={<RoleBasedRoute allowedRoles={['SALE']}><Post /></RoleBasedRoute>} />
             <Route path=":id" element={<RoleBasedRoute allowedRoles={['SALE']}><PostSingle /></RoleBasedRoute>} />

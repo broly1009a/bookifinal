@@ -69,11 +69,11 @@ const Navbar = () => {
 
     switch (role) {
       case 'ADMIN':
-        return '/admin/account-detail';
+        return '/admin/profile';
       case 'MANAGER':
-        return '/manager/account-detail';
+        return '/manager/profile';
       case 'SALE':
-        return '/sale/account-detail';
+        return '/sale/profile';
       default:
         return '/account-detail';
     }
