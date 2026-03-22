@@ -5,11 +5,15 @@ import Navbar from "../../components/navbar/Navbar"
 import { DataGrid } from "@mui/x-data-grid";
 import { orderColumns } from "../../datatablesource";
 import { getAllOrders } from "../../service/OrderService"
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import SidebarSale from "../../components/sidebar/SidebarSale";
 
 const Order = () => {
     const [data, setData] = useState([])
     const [columns, setColumns] = useState([]);
+    const location = useLocation();
+    const isSaleRoute = location.pathname.startsWith('/sale');
+    const orderBasePath = isSaleRoute ? '/sale/orders' : '/admin/orders';
 
 
     const actionColumn = [
@@ -20,7 +24,7 @@ const Order = () => {
             renderCell: (params) => {
                 return (
                     <div className="cellAction">
-                        <Link to={`/orders/${params.row.id}`} style={{ textDecoration: "none" }}>
+                        <Link to={`${orderBasePath}/${params.row.id}`} style={{ textDecoration: "none" }}>
                             <div className="viewButton">View Detail</div>
                         </Link>
                         <div
@@ -43,7 +47,7 @@ const Order = () => {
 
     return (
         <div className="list">
-            <Sidebar />
+            {isSaleRoute ? <SidebarSale /> : <Sidebar />}
             <div className="listContainer">
                 <Navbar />
                 <div className="datatable">

@@ -5,11 +5,13 @@ import Navbar from "../../components/navbar/Navbar"
 import { DataGrid } from "@mui/x-data-grid";
 import { sliderColumns } from "../../datatablesource";
 import { getAllSliders, deleteSlider } from "../../service/SliderService";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Slider = () => {
     const [data, setData] = useState([])
     const [columns, setColumns] = useState([]);
+    const location = useLocation();
+    const sliderBasePath = location.pathname.startsWith('/admin') ? '/admin/sliders' : '/sliders';
   
     const handleDelete = (id) => {
         const confirmBox = window.confirm(
@@ -29,7 +31,7 @@ const Slider = () => {
             renderCell: (params) => {
                 return (
                     <div className="cellAction">
-                        <Link to={`/sliders/${params.row.id}`} style={{ textDecoration: "none" }}>
+                        <Link to={`${sliderBasePath}/${params.row.id}`} style={{ textDecoration: "none" }}>
                             <div className="viewButton">Update</div>
                         </Link>
                         <div
@@ -59,7 +61,7 @@ const Slider = () => {
                 <div className="datatable">
                     <div className="datatableTitle">
                         Manage Sliders
-                        <Link to={`/sliders/new`} className="link">
+                        <Link to={`${sliderBasePath}/new`} className="link">
                             Add New Slider
                         </Link>
                     </div>

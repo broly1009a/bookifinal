@@ -3,18 +3,22 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import { updatePost, getPostById, getAllPostCategories } from '../../service/PostService';
 import { FormControl, InputLabel, NativeSelect, Box } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import SidebarSale from "../../components/sidebar/SidebarSale"
 const PostSingle = () => {
     const [data, setData] = useState({})
     const { id } = useParams()
+    const navigate = useNavigate();
+    const location = useLocation();
     const [errors, setErrors] = useState([])
     const [categories, setCategories] = useState([])
+    const isSaleRoute = location.pathname.startsWith('/sale');
+    const postBasePath = isSaleRoute ? '/sale/posts' : '/admin/posts';
 
     const handleCancel = () => {
-        window.location.replace("/posts")
+        navigate(postBasePath)
     }
 
     const handleSave = () => {
@@ -44,7 +48,7 @@ const PostSingle = () => {
 
         updatePost(data).then(res => {
             if (res.status === 200) {
-                window.location.replace("/posts")
+                navigate(postBasePath)
             }
             else {
                 setErrors(['Có lỗi xảy ra khi cập nhật bài viết. Vui lòng thử lại.']);
@@ -79,7 +83,7 @@ const PostSingle = () => {
     return (
         <div>
             <div className="single">
-                <SidebarSale />
+                {isSaleRoute ? <SidebarSale /> : <Sidebar />}
                 {data.length !== 0 && <div className="singleContainer">
                     <Navbar />
                     <div className="wrapper">

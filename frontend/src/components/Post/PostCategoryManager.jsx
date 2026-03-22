@@ -3,12 +3,15 @@ import { DataGrid } from '@mui/x-data-grid';
 import Sidebar from '../sidebar/Sidebar';
 import Navbar from '../navbar/Navbar';
 import { getAllPostCategories, createPostCategory, updatePostCategory, deletePostCategory } from '../../service/PostService';
+import { useLocation } from 'react-router-dom';
 import SidebarSale from "../../components/sidebar/SidebarSale"
 const PostCategoryManager = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({ name: '', description: '' });
     const [selectedCategory, setSelectedCategory] = useState(null);
+    const location = useLocation();
+    const isSaleRoute = location.pathname.startsWith('/sale');
 
     useEffect(() => {
         loadCategories();
@@ -89,7 +92,7 @@ const PostCategoryManager = () => {
 
     return (
         <div className="list">
-            <SidebarSale />
+            {isSaleRoute ? <SidebarSale /> : <Sidebar />}
             <div className="listContainer">
                 <Navbar />
                 <div className="datatable">

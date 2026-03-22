@@ -64,8 +64,23 @@ const Navbar = () => {
     navigate('/');
   };
 
+  const getProfilePath = () => {
+    const role = getUserRole();
+
+    switch (role) {
+      case 'ADMIN':
+        return '/admin/account-detail';
+      case 'MANAGER':
+        return '/manager/account-detail';
+      case 'SALE':
+        return '/sale/account-detail';
+      default:
+        return '/account-detail';
+    }
+  };
+
   const handleProfileClick = () => {
-    navigate('/account-detail');
+    navigate(getProfilePath());
     setShowProfileDropdown(false);
   };
 

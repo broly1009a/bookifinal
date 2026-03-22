@@ -11,7 +11,7 @@ import { jwtDecode } from 'jwt-decode'
 import { getUserInfoByEmail, updateUser } from "../../services/UserService"
 const ProfileDetail = ({ cart, cookies }) => {
 
-    const [errors, setErrors] = useState({ emptyError: false, phoneError: false, emailError: false, passwordError: false })
+    const [errors, setErrors] = useState({ emptyError: false, phoneError: false, emailError: false })
     const [profileData, setProfileData] = useState()
     const [provinces, setProvices] = useState([])
     const [province, setProvince] = useState()
@@ -88,7 +88,6 @@ const ProfileDetail = ({ cart, cookies }) => {
         }
         const phone_regex = /((09|03|07|08|05)+([0-9]{8})\b)/g
         const email_regex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/g
-        const password_regex = /[a-zA-Z\d]{6,}$/g
         if (!phone_regex.test(profileData.phone)) {
             setErrors({ ...errors, phoneError: true })
             return;
@@ -102,13 +101,6 @@ const ProfileDetail = ({ cart, cookies }) => {
         }
         else {
             setErrors({ ...errors, emailError: false })
-        }
-        if (!password_regex.test(profileData.password)) {
-            setErrors({ ...errors, passwordError: true })
-            return;
-        }
-        else {
-            setErrors({ ...errors, passwordError: false })
         }
         if (province_name && district_name && ward_name) {
             profileData.province = province_name
@@ -216,7 +208,6 @@ const ProfileDetail = ({ cart, cookies }) => {
                                                 {errors.emptyError && <p style={{ color: 'red' }}>Vui lòng điền đầy đủ thông tin</p>}
                                                 {errors.phoneError && <p style={{ color: 'red' }}>Số điện thoại không hợp lệ</p>}
                                                 {errors.emailError && <p style={{ color: 'red' }}>Email không hợp lệ</p>}
-                                                {errors.passwordError && <p style={{ color: 'red' }}>Mật khẩu phải có ít nhất 6 ký tự</p>}
                                             </Form.Group>
                                         </Form>
                                     </Col>

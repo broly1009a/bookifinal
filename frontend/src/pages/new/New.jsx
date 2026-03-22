@@ -1,12 +1,21 @@
 import "./new.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
-import DriveFolderUploadOutlinedIcon from "@mui/icons-material/DriveFolderUploadOutlined";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import SidebarManager from "../../components/sidebar/SidebarManager"
 const New = ({ inputs, title, handleAdd, location }) => {
   const [data, setData] = useState({})
   const [errors, setErrors] = useState([])
+  const currentLocation = useLocation();
+
+  const renderSidebar = () => {
+    if (currentLocation.pathname.startsWith("/admin")) {
+      return <Sidebar />;
+    }
+
+    return <SidebarManager />;
+  }
 
   const handleInput = (e) => {
     const id = e.target.id;
@@ -15,7 +24,7 @@ const New = ({ inputs, title, handleAdd, location }) => {
     setData({ ...data, [id]: value })
   }
 
-  const handleAddItem = (e) => {
+  const handleAddItem = async (e) => {
     e.preventDefault()
     
     const validationErrors = [];
@@ -35,13 +44,17 @@ const New = ({ inputs, title, handleAdd, location }) => {
     // Clear errors if validation passes
     setErrors([]);
 
-    handleAdd(data)
-    window.location.replace(location)
+    try {
+      await Promise.resolve(handleAdd(data));
+      window.location.replace(location)
+    } catch (error) {
+      setErrors(["Có lỗi xảy ra khi thêm mới. Vui lòng thử lại."]);
+    }
   }
 
   return (
     <div className="new">
-     <SidebarManager/>
+      {renderSidebar()}
       <div className="newContainer">
         <Navbar />
         <div className="top">

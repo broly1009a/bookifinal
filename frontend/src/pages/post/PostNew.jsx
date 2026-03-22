@@ -4,15 +4,19 @@ import Navbar from "../../components/navbar/Navbar";
 import { createPost, getPostById, getAllPostCategories } from '../../service/PostService';
 import { FormControl, InputLabel, NativeSelect, Box } from '@mui/material';
 import { getUserInfoByEmail } from '../../service/UserService';
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import { AuthContext } from '../../context/AuthContext';
 import SidebarSale from "../../components/sidebar/SidebarSale"
 const PostNew = () => {
     const { currentUser, userInfo } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const location = useLocation();
     const [categories, setCategories] = useState([])
     const [errors, setErrors] = useState([])
+    const isSaleRoute = location.pathname.startsWith('/sale');
+    const postBasePath = isSaleRoute ? '/sale/posts' : '/admin/posts';
     const [data, setData] = useState({
         title: "",
         content: "",
@@ -52,7 +56,7 @@ const PostNew = () => {
         setData({ ...data, content: e.target.value });
     }
     const handleCancel = () => {
-        window.location.replace("/posts")
+        navigate(postBasePath)
     }
 
     const handleSave = () => {
@@ -85,7 +89,7 @@ const PostNew = () => {
 
         console.log("Saving data:", data);
         createPost(data).then(() => {
-            window.location.replace("/posts")
+            navigate(postBasePath)
         })
         .catch((error) => {
             console.error("Error creating post:", error);
@@ -95,7 +99,7 @@ const PostNew = () => {
   return (
     <div>
         <div className="single">
-                <SidebarSale />
+                {isSaleRoute ? <SidebarSale /> : <Sidebar />}
                 {data.length !== 0 && <div className="singleContainer">
                     <Navbar />
                     <div className="wrapper">

@@ -60,13 +60,13 @@ const StaffList = () => {
   };
 
   const handleChangeRole = async (id, currentRole) => {
-    const newRole = prompt(`Change role for this staff member.\nCurrent role: ${currentRole}\n\nEnter new role (ADMIN, STAFF, MANAGER):`, currentRole);
+    const newRole = prompt(`Change role for this staff member.\nCurrent role: ${currentRole}\n\nEnter new role (ADMIN, MANAGER, SALE):`, currentRole);
     
     if (!newRole || newRole === currentRole) return;
     
-    const validRoles = ['ADMIN', 'STAFF', 'MANAGER'];
+    const validRoles = ['ADMIN', 'MANAGER', 'SALE'];
     if (!validRoles.includes(newRole.toUpperCase())) {
-      alert('Invalid role! Please enter one of: ADMIN, STAFF, MANAGER');
+      alert('Invalid role! Please enter one of: ADMIN, MANAGER, SALE');
       return;
     }
 
@@ -114,7 +114,7 @@ const StaffList = () => {
     <div className="datatable">
       <div className="datatableTitle">
         Manage Staff
-        <Link to="/staff/new" className="link">
+        <Link to="/admin/staff/new" className="link">
           Add New Staff
         </Link>
       </div>
@@ -148,8 +148,8 @@ const StaffList = () => {
         >
           <option value="">All Roles</option>
           <option value="ADMIN">Admin</option>
-          <option value="STAFF">Staff</option>
           <option value="MANAGER">Manager</option>
+          <option value="SALE">Sale</option>
         </select>
 
         <button 

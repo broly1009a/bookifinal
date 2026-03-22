@@ -24,9 +24,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
                         @Param("state") AccountState state,
                         Pageable pageable);
 
+        @Query("SELECT u FROM User u " +
+                        "WHERE (:fullName IS NULL OR u.fullName LIKE %:fullName%) " +
+                        "AND u.role != :role " +
+                        "AND (:state IS NULL OR u.state = :state)")
         Page<User> findByFullNameContainingAndRoleNotAndState(
-                        String fullName,
-                        Role Role,
-                        AccountState state,
+                        @Param("fullName") String fullName,
+                        @Param("role") Role role,
+                        @Param("state") AccountState state,
                         Pageable pageable);
 }

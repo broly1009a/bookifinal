@@ -244,6 +244,8 @@ function App() {
           <Route path="/admin/changePass">
             <Route index element={<RoleBasedRoute allowedRoles={['ADMIN']}><AdminChangePassword /></RoleBasedRoute>} />
           </Route>
+
+          <Route path="/admin/account-detail" element={<RoleBasedRoute allowedRoles={['ADMIN']}><ProfileDetail cookies={cookies} /></RoleBasedRoute>} />
           
           <Route path="/admin/order-state">
             <Route path=":id" element={<RoleBasedRoute allowedRoles={['ADMIN']}><ChangeState /></RoleBasedRoute>} />
@@ -309,7 +311,7 @@ function App() {
           
           <Route path="/feedbacks">
             <Route index element={<RoleBasedRoute allowedRoles={['ADMIN', 'MANAGER', 'SALE']}><Feedback /></RoleBasedRoute>} />
-            <Route path=":id" element={<RoleBasedRoute allowedRoles={['ADMIN', 'MANAGER']}><FeedbackSingle /></RoleBasedRoute>} />
+            <Route path=":id" element={<RoleBasedRoute allowedRoles={['ADMIN', 'MANAGER', 'SALE']}><FeedbackSingle /></RoleBasedRoute>} />
           </Route>
           
           <Route path="/customers">
@@ -354,16 +356,21 @@ function App() {
             <Route path=":id" element={<RoleBasedRoute allowedRoles={['MANAGER']}><ManagerFeedbackSingle /></RoleBasedRoute>} />
           </Route>
           <Route path="/manager/change-password" element={<RoleBasedRoute allowedRoles={['MANAGER']}><ManagerChangePassword /></RoleBasedRoute>} />
+          <Route path="/manager/account-detail" element={<RoleBasedRoute allowedRoles={['MANAGER']}><ProfileDetail cookies={cookies} /></RoleBasedRoute>} />
 
           {/* Sale Routes */}
           <Route path="/sale" element={<RoleBasedRoute allowedRoles={['SALE']}><SaleHome /></RoleBasedRoute>} />
           <Route path="/sale/orders">
-            <Route index element={<RoleBasedRoute allowedRoles={['SALE']}><SaleList type={'orders'} /></RoleBasedRoute>} />
+            <Route index element={<RoleBasedRoute allowedRoles={['SALE']}><Order /></RoleBasedRoute>} />
             <Route path=":id" element={<RoleBasedRoute allowedRoles={['SALE']}><SaleOrderDetail /></RoleBasedRoute>} />
           </Route>
           <Route path="/sale/customers" element={<RoleBasedRoute allowedRoles={['SALE']}><SaleList type={'customers'} /></RoleBasedRoute>} />
-          <Route path="/sale/feedbacks" element={<RoleBasedRoute allowedRoles={['SALE']}><SaleList type={'feedbacks'} /></RoleBasedRoute>} />
+          <Route path="/sale/feedbacks">
+            <Route index element={<RoleBasedRoute allowedRoles={['SALE']}><SaleList type={'feedbacks'} /></RoleBasedRoute>} />
+            <Route path=":id" element={<RoleBasedRoute allowedRoles={['SALE']}><FeedbackSingle /></RoleBasedRoute>} />
+          </Route>
           <Route path="/sale/change-password" element={<RoleBasedRoute allowedRoles={['SALE']}><SaleChangePassword /></RoleBasedRoute>} />
+          <Route path="/sale/account-detail" element={<RoleBasedRoute allowedRoles={['SALE']}><ProfileDetail cookies={cookies} /></RoleBasedRoute>} />
            <Route path="/sale/posts">
             <Route index element={<RoleBasedRoute allowedRoles={['SALE']}><Post /></RoleBasedRoute>} />
             <Route path=":id" element={<RoleBasedRoute allowedRoles={['SALE']}><PostSingle /></RoleBasedRoute>} />

@@ -13,9 +13,9 @@ const AddStaff = () => {
     email: '',
     password: '',
     phone: '',
-    role: 'STAFF',
+    role: 'MANAGER',
     address: '',
-    city: '',
+    province: '',
     district: '',
     ward: ''
   });
@@ -47,9 +47,19 @@ const AddStaff = () => {
 
     setLoading(true);
     try {
-      await addStaff(formData);
+      await addStaff({
+        fullName: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone,
+        role: formData.role,
+        address: formData.address,
+        province: formData.province,
+        district: formData.district,
+        ward: formData.ward,
+      });
       alert('Staff member added successfully!');
-      navigate('/staff');
+      navigate('/admin/staff');
     } catch (error) {
       console.error("Error adding staff:", error);
       if (error.response && error.response.data) {
@@ -136,8 +146,8 @@ const AddStaff = () => {
                   }}
                   required
                 >
-                  <option value="STAFF">Staff</option>
                   <option value="MANAGER">Manager</option>
+                  <option value="SALE">Sale</option>
                   <option value="ADMIN">Admin</option>
                 </select>
               </div>
@@ -156,10 +166,10 @@ const AddStaff = () => {
               <div className="formInput">
                 <label>City</label>
                 <input 
-                  id="city"
+                  id="province"
                   type="text" 
                   placeholder="Ho Chi Minh" 
-                  value={formData.city}
+                  value={formData.province}
                   onChange={handleInput}
                 />
               </div>
@@ -192,7 +202,7 @@ const AddStaff = () => {
               
               <button 
                 type="button" 
-                onClick={() => navigate('/staff')}
+                onClick={() => navigate('/admin/staff')}
                 style={{ 
                   marginLeft: '10px', 
                   backgroundColor: '#6c757d' 

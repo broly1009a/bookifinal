@@ -4,11 +4,14 @@ import Navbar from "../../components/navbar/Navbar"
 import { DataGrid } from "@mui/x-data-grid";
 import { postColumns } from "../../datatablesource";
 import { getAllPosts, deletePost } from "../../service/PostService";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import SidebarSale from "../../components/sidebar/SidebarSale"
 const Post = () => {
     const [data, setData] = useState([])
     const [columns, setColumns] = useState([]);
+    const location = useLocation();
+    const isSaleRoute = location.pathname.startsWith('/sale');
+    const postBasePath = isSaleRoute ? '/sale/posts' : '/admin/posts';
 
     const handleDelete = (id) => {
         const confirmBox = window.confirm(
@@ -28,7 +31,7 @@ const Post = () => {
             renderCell: (params) => {
                 return (
                     <div className="cellAction">
-                        <Link to={`/posts/${params.row.id}`} style={{ textDecoration: "none" }}>
+                        <Link to={`${postBasePath}/${params.row.id}`} style={{ textDecoration: "none" }}>
                             <div className="viewButton">Update</div>
                         </Link>
                         <div
@@ -52,13 +55,13 @@ const Post = () => {
 
     return (
         <div className="list">
-            <SidebarSale/>
+            {isSaleRoute ? <SidebarSale /> : <Sidebar />}
             <div className="listContainer">
                 <Navbar />
                 <div className="datatable">
                     <div className="datatableTitle">
                        Manage Post
-                        <Link to={`/posts/new`} className="link">
+                        <Link to={`${postBasePath}/new`} className="link">
                             Add New Post
                         </Link>
                     </div>
