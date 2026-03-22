@@ -85,7 +85,7 @@ import Customer from "./pages/customer/Customer";
 import Staff from "./pages/staff/Staff";
 import AddStaff from "./components/User/AddStaff";
 import ProfilePage from "./pages/profile/ProfilePage";
-
+import OrderDetailUser from "./pages/order/OrderDetailUser";
 // Form inputs and styles
 import { productInputs, authorInputs, userInputs, collectionInputs, sliderInputs, publisherInputs, categoryInputs } from "./formSource";
 import "./style/dark.scss";
@@ -172,7 +172,7 @@ function App() {
           <Route path='/wishlist' element={<Wishlist setCart={setCart} cart={cart} />} />
           <Route path='/blogs/:id' element={<PostComponent />} />
           <Route path='/blog-detail/:id' element={<PostDetail />} />
-          <Route path="/order-detail/:id" element={<OrderDetail />} />
+          <Route path="/order-detail/:id" element={<OrderDetailUser />} />
           <Route path="/change-password" element={<ChangePassword cookies={cookies} />} />
 
           {/* Admin Routes */}
