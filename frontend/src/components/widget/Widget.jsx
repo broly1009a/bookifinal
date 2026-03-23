@@ -7,17 +7,17 @@ import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlin
 import InventoryOutlinedIcon from "@mui/icons-material/InventoryOutlined";
 import FeedbackOutlinedIcon from "@mui/icons-material/FeedbackOutlined";
 import WarningAmberOutlinedIcon from "@mui/icons-material/WarningAmberOutlined";
-
-import {getAllUser} from "../../service/UserService"
-import {getAllOrders} from "../../service/OrderService"
+import { Link } from "react-router-dom";
+import { getAllUser } from "../../service/UserService";
+import { getAllOrders } from "../../service/OrderService";
 import { useEffect, useState } from "react";
 
-const Widget =  ({ type, amount: propAmount, diff: propDiff }) => {
+const Widget = ({ type, amount: propAmount, diff: propDiff }) => {
   let data;
-  const [users,setUsers] = useState(null);
-  const [orders,setOrdes] = useState(null);
-  const [earnings,setEarnings] = useState(null);
-  const [balances,setBalances] = useState(null);
+  const [users, setUsers] = useState(null);
+  const [orders, setOrdes] = useState(null);
+  const [earnings, setEarnings] = useState(null);
+  const [balances, setBalances] = useState(null);
 
   //temporary
   const diff = propDiff || 20;
@@ -25,14 +25,14 @@ const Widget =  ({ type, amount: propAmount, diff: propDiff }) => {
   useEffect(() => {
     // Only fetch if amount is not provided via props
     if (!propAmount) {
-      getAllUser().then((result)=>{
+      getAllUser().then((result) => {
         setUsers(result.data.content);
-      })
-      getAllOrders().then((result)=>{
+      });
+      getAllOrders().then((result) => {
         setOrdes(result.data);
-      })
+      });
     }
-  },[propAmount])
+  }, [propAmount]);
 
   switch (type) {
     case "user":
@@ -40,7 +40,12 @@ const Widget =  ({ type, amount: propAmount, diff: propDiff }) => {
         title: "USERS",
         isMoney: false,
         link: "See all users",
-        amount : propAmount !== undefined ? propAmount : (users != null ? users.length : "loading"),
+        amount:
+          propAmount !== undefined
+            ? propAmount
+            : users != null
+              ? users.length
+              : "loading",
         icon: (
           <PersonOutlinedIcon
             className="icon"
@@ -57,7 +62,12 @@ const Widget =  ({ type, amount: propAmount, diff: propDiff }) => {
         title: "ORDERS",
         isMoney: false,
         link: "View all orders",
-        amount: propAmount !== undefined ? propAmount : (orders == null ? "loading" : orders.length),
+        amount:
+          propAmount !== undefined
+            ? propAmount
+            : orders == null
+              ? "loading"
+              : orders.length,
         icon: (
           <ShoppingCartOutlinedIcon
             className="icon"
@@ -100,11 +110,48 @@ const Widget =  ({ type, amount: propAmount, diff: propDiff }) => {
         ),
       };
       break;
+    case "collection":
+      data = {
+        title: "COLLECTIONS",
+        isMoney: false,
+        link: "View all collections",
+        path: "/manager/collections",
+        amount: propAmount !== undefined ? propAmount : "Loading...",
+        icon: (
+          <InventoryOutlinedIcon
+            className="icon"
+            style={{
+              backgroundColor: "rgba(255, 165, 0, 0.2)",
+              color: "orange",
+            }}
+          />
+        ),
+      };
+      break;
+    case "author":
+      data = {
+        title: "AUTHORS",
+        isMoney: false,
+        link: "View all authors",
+        path: "/manager/authors",
+        amount: propAmount !== undefined ? propAmount : "Loading...",
+        icon: (
+          <InventoryOutlinedIcon
+            className="icon"
+            style={{
+              backgroundColor: "rgba(255, 0, 0, 0.2)",
+              color: "crimson",
+            }}
+          />
+        ),
+      };
+      break;
     case "product":
       data = {
         title: "PRODUCTS",
         isMoney: false,
         link: "View all products",
+        path: "/manager/products",
         amount: propAmount !== undefined ? propAmount : "Loading...",
         icon: (
           <InventoryOutlinedIcon
@@ -181,7 +228,9 @@ const Widget =  ({ type, amount: propAmount, diff: propDiff }) => {
             <span className="counter">
               {data.isMoney && "$"} {data.amount}
             </span>
-            <span className="link">{data.link}</span>
+            <Link to={data.path} className="link">
+              {data.link}
+            </Link>
           </div>
           <div className="right">
             <div className="percentage positive">

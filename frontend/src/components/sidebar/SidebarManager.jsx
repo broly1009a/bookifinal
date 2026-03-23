@@ -3,16 +3,16 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import StoreIcon from "@mui/icons-material/Store";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import ChatIcon from '@mui/icons-material/Chat';
-import MenuBookIcon from '@mui/icons-material/MenuBook';
+import ChatIcon from "@mui/icons-material/Chat";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
 import { Link, useLocation } from "react-router-dom";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import QueueIcon from '@mui/icons-material/Queue';
-import AssuredWorkloadIcon from '@mui/icons-material/AssuredWorkload';
-import CategoryIcon from '@mui/icons-material/Category';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import QueueIcon from "@mui/icons-material/Queue";
+import AssuredWorkloadIcon from "@mui/icons-material/AssuredWorkload";
+import CategoryIcon from "@mui/icons-material/Category";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 const SidebarManager = () => {
   const { dispatch } = useContext(DarkModeContext);
   const authContext = useContext(AuthContext);
@@ -22,13 +22,16 @@ const SidebarManager = () => {
     authContext.dispatch({ type: "LOGOUT" });
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie =
+      "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     window.location.href = "/";
-  }
+  };
 
   const isActive = (path) => {
-    return location.pathname === path || location.pathname.startsWith(path + '/');
-  }
+    return (
+      location.pathname === path || location.pathname.startsWith(path + "/")
+    );
+  };
 
   return (
     <div className="sidebar">
@@ -43,14 +46,20 @@ const SidebarManager = () => {
         <ul>
           <p className="title">MAIN</p>
           <Link to="/manager" style={{ textDecoration: "none" }}>
-            <li className={isActive("/manager") && location.pathname === "/manager" ? "active" : ""}>
+            <li
+              className={
+                isActive("/manager") && location.pathname === "/manager"
+                  ? "active"
+                  : ""
+              }
+            >
               <DashboardIcon className="icon" />
               <span>Dashboard</span>
             </li>
           </Link>
-          
+
           <p className="title">MANAGEMENT</p>
-           <Link to="/manager/authors" style={{ textDecoration: "none" }}>
+          <Link to="/manager/authors" style={{ textDecoration: "none" }}>
             <li className={isActive("/manager/authors") ? "active" : ""}>
               <PersonOutlineIcon className="icon" />
               <span>Authors</span>
@@ -62,35 +71,40 @@ const SidebarManager = () => {
               <span>Products</span>
             </li>
           </Link>
-          <Link to="/manager/collections" style={{ textDecoration: 'none' }}>
+          <Link to="/manager/collections" style={{ textDecoration: "none" }}>
             <li className={isActive("/manager/collections") ? "active" : ""}>
               <QueueIcon className="icon" />
               <span>Collections</span>
             </li>
           </Link>
-          <Link to="/manager/publishers" style={{ textDecoration: 'none' }}>
+          <Link to="/manager/publishers" style={{ textDecoration: "none" }}>
             <li className={isActive("/manager/publishers") ? "active" : ""}>
               <AssuredWorkloadIcon className="icon" />
               <span>Publishers</span>
             </li>
           </Link>
-          <Link to="/manager/categories" style={{ textDecoration: 'none' }}>
+          <Link to="/manager/categories" style={{ textDecoration: "none" }}>
             <li className={isActive("/manager/categories") ? "active" : ""}>
               <CategoryIcon className="icon" />
               <span>Categories</span>
             </li>
           </Link>
-          <p className="title">FEEDBACK</p>
-          <Link to="/manager/feedbacks" style={{ textDecoration: 'none' }}>
+          {/* <p className="title">FEEDBACK</p>
+          {/* <Link to="/manager/feedbacks" style={{ textDecoration: 'none' }}>
             <li className={isActive("/manager/feedbacks") ? "active" : ""}>
               <ChatIcon className="icon" />
               <span>Feedbacks</span>
             </li>
-          </Link>
+          </Link> */} 
 
           <p className="title">ACCOUNT</p>
-          <Link to="/manager/change-password" style={{ textDecoration: 'none' }}>
-            <li className={isActive("/manager/change-password") ? "active" : ""}>
+          <Link
+            to="/manager/change-password"
+            style={{ textDecoration: "none" }}
+          >
+            <li
+              className={isActive("/manager/change-password") ? "active" : ""}
+            >
               <AccountCircleOutlinedIcon className="icon" />
               <span>Change Password</span>
             </li>

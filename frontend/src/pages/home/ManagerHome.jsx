@@ -7,21 +7,34 @@ import Featured from "../../components/featured/Featured";
 import Chart from "../../components/chart/Chart";
 import Table from "../../components/table/Table";
 import DashboardService from "../../service/DashboardService";
+import { getAllCollections } from "../../service/CollectionService";
+import { getAllAuthors } from "../../service/AuthorService";
 
 const ManagerHome = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [totalCollections, setTotalCollections] = useState(0);
+  const [totalAuthors, setTotalAuthors] = useState(0);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        const response = await DashboardService.getManagerSummary();
-        setDashboardData(response.data);
+
+        const [dashboardRes, collectionsRes, authorsRes] = await Promise.all([
+          DashboardService.getManagerSummary(),
+          getAllCollections(),
+          getAllAuthors(), // 👈 thêm
+        ]);
+
+        setDashboardData(dashboardRes.data);
+        setTotalCollections(collectionsRes.data.length);
+        setTotalAuthors(authorsRes.data.length); // 👈 thêm
+
         setError(null);
       } catch (err) {
-        console.error("Error fetching manager dashboard data:", err);
+        console.error("Error fetching dashboard data:", err);
         setError("Failed to load dashboard data");
       } finally {
         setLoading(false);
@@ -56,164 +69,54 @@ const ManagerHome = () => {
   }
 
   const overallStats = dashboardData?.overallStats || {};
-  const hasMonthlyRevenue = dashboardData?.monthlyRevenue && dashboardData.monthlyRevenue.length > 0;
-  const hasTopBooks = dashboardData?.topSellingBooks && dashboardData.topSellingBooks.length > 0;
-  const hasOrderStats = dashboardData?.orderStatsByState && dashboardData.orderStatsByState.length > 0;
-  
+  const hasMonthlyRevenue =
+    dashboardData?.monthlyRevenue && dashboardData.monthlyRevenue.length > 0;
+  const hasTopBooks =
+    dashboardData?.topSellingBooks && dashboardData.topSellingBooks.length > 0;
+  const hasOrderStats =
+    dashboardData?.orderStatsByState &&
+    dashboardData.orderStatsByState.length > 0;
+
   return (
     <div className="home">
       <SidebarManager />
       <div className="homeContainer">
         <Navbar />
-        
+
         {/* Welcome Section */}
-        <div style={{ 
-          padding: '24px 32px',
-          marginBottom: '24px',
-          background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-          borderRadius: '16px',
-          boxShadow: '0 10px 30px rgba(67, 233, 123, 0.2)',
-          color: 'white'
-        }}>
-          <h1 style={{ margin: '0 0 8px 0', fontSize: '28px', fontWeight: '700' }}>
+        <div
+          style={{
+            padding: "24px 32px",
+            marginBottom: "24px",
+            background: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
+            borderRadius: "16px",
+            boxShadow: "0 10px 30px rgba(67, 233, 123, 0.2)",
+            color: "white",
+          }}
+        >
+          <h1
+            style={{ margin: "0 0 8px 0", fontSize: "28px", fontWeight: "700" }}
+          >
             📊 Manager Dashboard
           </h1>
-          <p style={{ margin: 0, fontSize: '15px', opacity: 0.95 }}>
+          <p style={{ margin: 0, fontSize: "15px", opacity: 0.95 }}>
             Manage inventory, analyze sales trends, and optimize operations
           </p>
         </div>
 
         {/* Key Metrics */}
-        <div className="widgets" style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-          gap: '24px',
-          marginBottom: '32px'
-        }}>
+        <div
+          className="widgets"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gap: "24px",
+            marginBottom: "32px",
+          }}
+        >
           <Widget type="product" amount={overallStats.totalBooks || 0} />
-          <Widget type="feedback" amount={overallStats.activeCustomers || 0} />
-          <Widget type="lowstock" amount={overallStats.lowStockBooks || 0} />
-        </div>
-
-        {/* Charts Section */}
-        <div className="charts" style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-          gap: '24px',
-          marginBottom: '32px'
-        }}>
-          <Featured data={overallStats} />
-          {hasMonthlyRevenue ? (
-            <Chart title="Last 12 Months Revenue" aspect={2 / 1} data={dashboardData.monthlyRevenue} />
-          ) : (
-            <div style={{ 
-              padding: '40px 20px',
-              textAlign: 'center',
-              background: 'white',
-              borderRadius: '12px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <div style={{ fontSize: '48px', marginBottom: '16px' }}>💰</div>
-              <p style={{ color: '#9ca3af', margin: 0, fontSize: '15px' }}>
-                No revenue data available yet
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Top Selling Books */}
-        <div style={{ 
-          background: 'white',
-          borderRadius: '16px',
-          boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-          marginBottom: '24px',
-          overflow: 'hidden',
-          transition: 'transform 0.2s ease, box-shadow 0.2s ease'
-        }}>
-          <div style={{ 
-            padding: '24px 28px',
-            borderBottom: '1px solid #f0f0f0',
-            background: 'linear-gradient(to right, #f9fafb, #ffffff)'
-          }}>
-            <h2 style={{ 
-              margin: 0,
-              fontSize: '20px',
-              fontWeight: '700',
-              color: '#1f2937',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px'
-            }}>
-              🏆 Top Selling Books
-            </h2>
-          </div>
-          <div style={{ padding: '20px' }}>
-            {hasTopBooks ? (
-              <Table type="books" data={dashboardData.topSellingBooks} />
-            ) : (
-              <div style={{ 
-                padding: '40px 20px',
-                textAlign: 'center',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center'
-              }}>
-                <div style={{ fontSize: '48px', marginBottom: '16px' }}>📚</div>
-                <p style={{ color: '#9ca3af', margin: 0, fontSize: '15px' }}>
-                  No selling data available yet
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Order Statistics by State */}
-        <div style={{ 
-          background: 'white',
-          borderRadius: '16px',
-          boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-          marginBottom: '24px',
-          overflow: 'hidden'
-        }}>
-          <div style={{ 
-            padding: '24px 28px',
-            borderBottom: '1px solid #f0f0f0',
-            background: 'linear-gradient(to right, #f9fafb, #ffffff)'
-          }}>
-            <h2 style={{ 
-              margin: 0,
-              fontSize: '20px',
-              fontWeight: '700',
-              color: '#1f2937',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px'
-            }}>
-              📍 Order Statistics by State
-            </h2>
-          </div>
-          <div style={{ padding: '20px' }}>
-            {hasOrderStats ? (
-              <Table type="orderStats" data={dashboardData.orderStatsByState} />
-            ) : (
-              <div style={{ 
-                padding: '40px 20px',
-                textAlign: 'center',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center'
-              }}>
-                <div style={{ fontSize: '48px', marginBottom: '16px' }}>🗺️</div>
-                <p style={{ color: '#9ca3af', margin: 0, fontSize: '15px' }}>
-                  No order statistics available
-                </p>
-              </div>
-            )}
-          </div>
+          <Widget type="author" amount={totalAuthors} />
+          <Widget type="collection" amount={totalCollections} /> {/* 👈 thêm */}
         </div>
       </div>
     </div>
