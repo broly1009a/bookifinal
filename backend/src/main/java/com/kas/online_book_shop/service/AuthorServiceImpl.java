@@ -15,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class AuthorServiceImpl implements AuthorService {
+
     private final AuthorRepository authorRepository;
 
     @Override
@@ -31,15 +32,37 @@ public class AuthorServiceImpl implements AuthorService {
         return authorRepository.findAll();
     }
 
+    // ✅ CREATE
     @Override
     public Author saveAuthor(Author author) {
+
+        // check trùng (không phân biệt hoa thường)
+        boolean exists = authorRepository.findAll().stream()
+                .anyMatch(a -> a.getName().equalsIgnoreCase(author.getName()));
+
+        if (exists) {
+            throw new RuntimeException("Tên tác giả đã tồn tại");
+        }
+
         return authorRepository.save(author);
     }
 
+    // ✅ UPDATE
     @Override
     public Author updateAuthor(Author author) {
-        authorRepository.findById(author.getId())
+
+        Author existing = authorRepository.findById(author.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy tác giả để cập nhật"));
+
+        // nếu đổi tên thì mới check trùng
+        boolean exists = authorRepository.findAll().stream()
+                .anyMatch(a -> !a.getId().equals(author.getId()) &&
+                        a.getName().equalsIgnoreCase(author.getName()));
+
+        if (exists) {
+            throw new RuntimeException("Tên tác giả đã tồn tại");
+        }
+
         return authorRepository.save(author);
     }
 
@@ -53,5 +76,4 @@ public class AuthorServiceImpl implements AuthorService {
     public Page<Author> getAllAuthor(Pageable pageable) {
         return authorRepository.findAll(pageable);
     }
-
 }

@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -24,6 +25,10 @@ public class Book {
     private Long id;
 
     @NotBlank(message = "The title of the book is required")
+    @Pattern(
+            regexp = "^[a-zA-Z0-9À-ỹ\\s]+$",
+            message = "Title must not contain special characters"
+    )
     private String title;
 
     @ManyToOne()
@@ -76,6 +81,10 @@ public class Book {
 
     @Column(unique = true)
     @NotBlank(message = "The ISBN is required")
+    @Pattern(
+            regexp = "^[0-9\\-]+$",
+            message = "ISBN must contain only numbers and '-'"
+    )
     private String ISBN;
 
     @Min(value = 0, message = "The discount must be at least 0")

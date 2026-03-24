@@ -2,6 +2,7 @@ package com.kas.online_book_shop.controller;
 
 import com.kas.online_book_shop.model.Author;
 import com.kas.online_book_shop.service.AuthorService;
+import jakarta.validation.Valid; // ✅ THÊM DÒNG NÀY
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/author")
 public class AuthorController {
+
     private final AuthorService authorService;
 
     @GetMapping("")
@@ -32,8 +34,10 @@ public class AuthorController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "asc") String sortOrder) {
+
         Direction direction = (sortOrder.equalsIgnoreCase("asc")) ? Direction.ASC : Direction.DESC;
         Pageable pageable = PageRequest.of(page, size, direction, sortBy);
+
         return ResponseEntity.ok(authorService.getAllAuthor(pageable));
     }
 
@@ -42,13 +46,16 @@ public class AuthorController {
         return ResponseEntity.ok(authorService.getAuthorById(id));
     }
 
+    // ✅ FIX: thêm @Valid
     @PostMapping()
-    public ResponseEntity<Author> saveAuthor(@RequestBody Author author) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(authorService.saveAuthor(author));
+    public ResponseEntity<Author> saveAuthor(@Valid @RequestBody Author author) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(authorService.saveAuthor(author));
     }
 
+    // ✅ FIX: thêm @Valid
     @PutMapping
-    public ResponseEntity<Author> updateAuthor(@RequestBody Author updatedAuthor) {
+    public ResponseEntity<Author> updateAuthor(@Valid @RequestBody Author updatedAuthor) {
         return ResponseEntity.ok(authorService.updateAuthor(updatedAuthor));
     }
 
@@ -57,5 +64,4 @@ public class AuthorController {
         authorService.deleteAuthor(id);
         return ResponseEntity.noContent().build();
     }
-
 }

@@ -1,11 +1,10 @@
 import "./datatable.scss";
 import { DataGrid } from "@mui/x-data-grid";
-import { authorColumns, productColumns, feedbackColumns } from "../../datatablesource";
+import { authorColumns, productColumns } from "../../datatablesource";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getAllBooks, deleteBook, updateBook } from "../../service/BookService";
 import { getAllAuthors, deleteAuthor, updateAuthor } from "../../service/AuthorService";
-import { getAllFeedbacks } from "../../service/FeedbackService";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 const Datatable = ({ type, role }) => {
   const [data, setData] = useState([]);
@@ -162,10 +161,9 @@ const Datatable = ({ type, role }) => {
       headerName: "Action",
       width: 250,
       renderCell: (params) => {
-        const basePath = role === "ADMIN" ? "/admin" : role === "MANAGER" ? "/manager" : role === "SALE" ? "/sale" : "";
+        const basePath = role === "ADMIN" ? "/admin" : role === "MANAGER" ? "/manager" : "";
         const updatePath = `${basePath}/${type}/${params.row.id}`;
         const shouldShowButtons = params.row.state !== "ACTIVE" && params.row.state !== "INACTIVE";
-        const isFeedbackType = type === "feedbacks";
         
         if (role === "ADMIN") {
           return (
@@ -197,17 +195,15 @@ const Datatable = ({ type, role }) => {
             <div className="cellAction">
               {canUpdate && (
                 <Link to={updatePath} style={{ textDecoration: "none" }}>
-                  <div className="viewButton">{isFeedbackType ? "Respond" : "Update"}</div>
+                  <div className="viewButton">Update</div>
                 </Link>
               )}
-              {!isFeedbackType && (
-                <div
-                  className="deleteButton"
-                  onClick={() => handleDelete(params.row.id)}
-                >
-                  Delete
-                </div>
-              )}
+              <div
+                className="deleteButton"
+                onClick={() => handleDelete(params.row.id)}
+              >
+                Delete
+              </div>
             </div>
           );
         }
@@ -231,13 +227,6 @@ const Datatable = ({ type, role }) => {
           setData(res.data);
           setSearchedData(res.data)
           console.log(res.data)
-        }).catch(err => console.log(err));
-        break;
-      case "feedbacks":
-        getAllFeedbacks().then((res) => {
-          setColumns(feedbackColumns.concat(actionColumn));
-          setData(res.data);
-          setSearchedData(res.data);
         }).catch(err => console.log(err));
         break;
       default:

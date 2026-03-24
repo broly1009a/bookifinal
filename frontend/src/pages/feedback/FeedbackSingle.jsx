@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Sidebar from "../../components/sidebar/Sidebar";
 import SidebarManager from "../../components/sidebar/SidebarManager";
-import SidebarSale from "../../components/sidebar/SidebarSale";
 import Navbar from "../../components/navbar/Navbar";
 import { getFeedbackById, answerFeedback } from '../../service/FeedbackService';
 import { FormControl, InputLabel, NativeSelect } from '@mui/material';
@@ -15,8 +14,7 @@ const FeedbackSingle = () => {
     const { id } = useParams()
     const location = useLocation()
     const isManager = location.pathname.startsWith('/manager')
-    const isSale = location.pathname.startsWith('/sale')
-    const basePath = isManager ? '/manager/feedbacks' : isSale ? '/sale/feedbacks' : '/feedbacks'
+    const basePath = isManager ? '/manager/feedbacks' : '/feedbacks'
     const [errors, setErrors] = useState([])
 
     const handleCancel = () => {
@@ -55,7 +53,7 @@ const FeedbackSingle = () => {
     return (
         <div>
             <div className="single">
-                {isManager ? <SidebarManager /> : isSale ? <SidebarSale /> : <Sidebar />}
+                {isManager ? <SidebarManager /> : <Sidebar />}
                 {data.length !== 0 && <div className="singleContainer">
                     <Navbar />
                     <div className="wrapper">
