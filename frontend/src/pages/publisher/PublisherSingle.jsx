@@ -2,25 +2,32 @@ import React, { useState, useEffect } from 'react'
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import { getPublisherById, updatePublisher } from '../../service/PublisherService';
-import { FormControl, InputLabel, NativeSelect } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
+import SidebarManager from "../../components/sidebar/SidebarManager";
 const PublisherSingle = () => {
     const [data, setData] = useState({})
     const { id } = useParams()
+    const location = useLocation()
+    const isManager = location.pathname.startsWith('/manager')
+    const isAdmin = location.pathname.startsWith('/admin')
+    const basePath = isManager ? '/manager/publishers' : isAdmin ? '/admin/publishers' : '/publishers'
     const [errors, setErrors] = useState([])
 
     const handleCancel = () => {
-        window.location.replace("/publishers")
+        window.location.replace(basePath)
     }
 
     const handleSave = () => {
         const validationErrors = [];
+        const publisherNameRegex = /^[\p{L}\p{N}\s]+$/u;
 
         // Validate required fields
         if (!data.name || data.name.trim() === '') {
             validationErrors.push('Tên nhà xuất bản không được để trống');
+        } else if (!publisherNameRegex.test(data.name.trim())) {
+            validationErrors.push('Tên nhà xuất bản không được chứa ký tự đặc biệt');
         }
         if (!data.website || data.website.trim() === '') {
             validationErrors.push('Website không được để trống');
@@ -36,7 +43,7 @@ const PublisherSingle = () => {
 
         updatePublisher(data).then(res => {
             if (res.status === 200) {
-                window.location.replace("/publishers")
+                window.location.replace(basePath)
             }
             else {
                 setErrors(['Có lỗi xảy ra khi cập nhật nhà xuất bản. Vui lòng thử lại.']);
@@ -51,12 +58,11 @@ const PublisherSingle = () => {
             setData(res.data)
         })
     }, [])
-    console.log(data)
 
     return (
         <div>
             <div className="single">
-                <Sidebar />
+                {isManager ? <SidebarManager /> : <Sidebar />}
                 {data.length !== 0 && <div className="singleContainer">
                     <Navbar />
                     <div className="wrapper">

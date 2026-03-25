@@ -12,7 +12,8 @@ const CategorySingle = () => {
     const { id } = useParams()
     const location = useLocation()
     const isManager = location.pathname.startsWith('/manager')
-    const basePath = isManager ? '/manager/categories' : '/categories'
+    const isAdmin = location.pathname.startsWith('/admin')
+    const basePath = isManager ? '/manager/categories' : isAdmin ? '/admin/categories' : '/categories'
     const [errors, setErrors] = useState([])
 
     const handleCancel = () => {
@@ -21,10 +22,13 @@ const CategorySingle = () => {
 
     const handleSave = () => {
         const validationErrors = [];
+        const categoryNameRegex = /^[\p{L}\p{N}\s]+$/u;
 
         // Validate required field
         if (!data.name || data.name.trim() === '') {
             validationErrors.push('Tên danh mục không được để trống');
+        } else if (!categoryNameRegex.test(data.name.trim())) {
+            validationErrors.push('Tên danh mục không được chứa ký tự đặc biệt');
         }
 
         if (validationErrors.length > 0) {

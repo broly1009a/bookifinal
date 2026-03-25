@@ -2,18 +2,21 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import { updateAuthor, getAuthorById } from "../../service/AuthorService";
-import { FormControl, InputLabel, NativeSelect } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import SidebarManager from "../../components/sidebar/SidebarManager";
 const AuthorSingle = () => {
   const [data, setData] = useState({});
   const { id } = useParams();
+  const location = useLocation();
+  const isManager = location.pathname.startsWith('/manager');
+  const isAdmin = location.pathname.startsWith('/admin');
+  const basePath = isManager ? '/manager/authors' : isAdmin ? '/admin/authors' : '/authors';
   const [errors, setErrors] = useState([]);
 
   const handleCancel = () => {
-    window.location.replace("/authors");
+    window.location.replace(basePath);
   };
 
   const handleSave = () => {
@@ -49,7 +52,7 @@ const AuthorSingle = () => {
     updateAuthor(data)
       .then((res) => {
         if (res.status === 200) {
-          window.location.replace("/authors");
+          window.location.replace(basePath);
         } else {
           setErrors(["Có lỗi xảy ra khi cập nhật tác giả. Vui lòng thử lại."]);
         }
@@ -81,12 +84,11 @@ const AuthorSingle = () => {
       setData(res.data);
     });
   }, []);
-  console.log(data);
 
   return (
     <div>
       <div className="single">
-        <SidebarManager />
+        {isManager ? <SidebarManager /> : <Sidebar />}
         {data.length !== 0 && (
           <div className="singleContainer">
             <Navbar />

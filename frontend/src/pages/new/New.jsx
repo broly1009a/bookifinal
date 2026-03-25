@@ -8,6 +8,7 @@ const New = ({ inputs, title, handleAdd, location }) => {
   const [data, setData] = useState({})
   const [errors, setErrors] = useState([])
   const currentLocation = useLocation();
+  const noSpecialCharRegex = /^[\p{L}\p{N}\s]+$/u;
 
   const renderSidebar = () => {
     if (currentLocation.pathname.startsWith("/admin")) {
@@ -28,6 +29,9 @@ const New = ({ inputs, title, handleAdd, location }) => {
     e.preventDefault()
     
     const validationErrors = [];
+    const isCollectionPage = location.includes('/collections');
+    const isPublisherPage = location.includes('/publishers');
+    const isCategoryPage = location.includes('/categories');
 
     // Validate required fields
     inputs.forEach(input => {
@@ -35,6 +39,28 @@ const New = ({ inputs, title, handleAdd, location }) => {
         validationErrors.push(`${input.label} không được để trống`);
       }
     });
+
+    // Validate special characters with clear, field-specific messages
+    if (isCollectionPage) {
+      if (data.name && !noSpecialCharRegex.test(data.name.trim())) {
+        validationErrors.push('Tên bộ sưu tập không được chứa ký tự đặc biệt');
+      }
+      if (data.type && !noSpecialCharRegex.test(data.type.trim())) {
+        validationErrors.push('Loại bộ sưu tập không được chứa ký tự đặc biệt');
+      }
+    }
+
+    if (isPublisherPage) {
+      if (data.name && !noSpecialCharRegex.test(data.name.trim())) {
+        validationErrors.push('Tên nhà xuất bản không được chứa ký tự đặc biệt');
+      }
+    }
+
+    if (isCategoryPage) {
+      if (data.name && !noSpecialCharRegex.test(data.name.trim())) {
+        validationErrors.push('Tên danh mục không được chứa ký tự đặc biệt');
+      }
+    }
 
     if (validationErrors.length > 0) {
       setErrors(validationErrors);
