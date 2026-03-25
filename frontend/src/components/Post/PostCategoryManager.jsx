@@ -87,7 +87,7 @@ const PostCategoryManager = () => {
     const columns = [
         { field: 'id', headerName: 'STT', width: 90 },
         { field: 'name', headerName: 'Name', width: 200 },
-        { field: 'description', headerName: 'Description', width: 250 },
+        // { field: 'description', headerName: 'Description', width: 250 },
     ].concat(actionColumn);
 
     return (
@@ -155,13 +155,13 @@ const PostCategoryManager = () => {
                                     style={{ padding: '10px 18px', borderRadius: '8px', border: '1px solid #ccc', minWidth: '220px', fontSize: '16px' }}
                                     required
                                 />
-                                <textarea
+                                {/* <textarea
                                     placeholder="Description"
                                     value={formData.description}
                                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                                     style={{ padding: '10px 18px', borderRadius: '8px', border: '1px solid #ccc', minWidth: '220px', fontSize: '16px', minHeight: '100px' }}
                                     required
-                                />
+                                /> */}
                                 <div style={{ display: 'flex', gap: '16px', marginTop: 8 }}>
                                     <button
                                         type="submit"

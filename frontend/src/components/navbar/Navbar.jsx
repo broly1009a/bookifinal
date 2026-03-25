@@ -87,10 +87,10 @@ const Navbar = () => {
   return (
     <div className="navbar">
       <div className="wrapper">
-        <div className="search">
+        {/* <div className="search">
           <input type="text" placeholder="Search..." />
           <SearchOutlinedIcon className="search-icon" />
-        </div>
+        </div> */}
         <div className="items">
           {/* <div className="item" title="Toggle Dark Mode">
             {darkMode ? (

@@ -41,7 +41,12 @@ public class RatingServiceImpl implements RatingService {
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy người dùng để xóa wishlist"));
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sách để xóa khỏi wishlist"));
-        var existingRating = ratingRepository.findByBookAndUser(book, user).orElse(new Rating(null, user, book, value));
+        var existingRating = ratingRepository.findByBookAndUser(book, user).orElseGet(() -> {
+            var nextId = ratingRepository.findTopByOrderByIdDesc()
+                    .map(rating -> rating.getId() + 1)
+                    .orElse(1L);
+            return new Rating(nextId, user, book, value);
+        });
         existingRating.setValue(value);
         return ratingRepository.save(existingRating);
     }

@@ -7,11 +7,13 @@ import TableContainer from "@mui/material/TableContainer"
 import TableHead from "@mui/material/TableHead"
 import TableRow from "@mui/material/TableRow"
 import Paper from "@mui/material/Paper"
+import Rating from "@mui/material/Rating"
 import { useParams } from "react-router-dom"
 import { getOrderById } from "../../service/OrderService"
 import { useReactToPrint } from "react-to-print"
 import PrintIcon from "@mui/icons-material/Print"
 import Breadscrumb from "../../components/Breadscrumb"
+import { addRating, getRatingByBookAndUser } from "../../services/RatingService"
 
 const formatDate = (inputDate) => {
     if (!inputDate) return "Chua cap nhat"
@@ -40,6 +42,9 @@ const getBadgeClass = (value) => {
 const OrderDetailUser = () => {
     const { id } = useParams()
     const [order, setOrder] = useState({})
+    const [bookRatings, setBookRatings] = useState({})
+    const [ratingMessage, setRatingMessage] = useState("")
+    const [submittingBookId, setSubmittingBookId] = useState(null)
     const printRef = useRef(null)
 
     const handlePrint = useReactToPrint({
@@ -51,6 +56,59 @@ const OrderDetailUser = () => {
             setOrder(res.data)
         })
     }, [id])
+
+    useEffect(() => {
+        const userId = order?.user?.id
+        const isCompleted = order?.state === "COMPLETED"
+        const details = order?.orderDetails || []
+
+        if (!userId || !isCompleted || details.length === 0) {
+            setBookRatings({})
+            return
+        }
+
+        const uniqueBookIds = [...new Set(details.map((item) => item?.book?.id).filter(Boolean))]
+        if (uniqueBookIds.length === 0) {
+            setBookRatings({})
+            return
+        }
+
+        Promise.all(
+            uniqueBookIds.map((bookId) =>
+                getRatingByBookAndUser(bookId, userId)
+                    .then((res) => ({ bookId, value: res?.data?.value || 0 }))
+                    .catch(() => ({ bookId, value: 0 })),
+            ),
+        ).then((results) => {
+            const nextRatings = {}
+            results.forEach(({ bookId, value }) => {
+                nextRatings[bookId] = value
+            })
+            setBookRatings(nextRatings)
+        })
+    }, [order])
+
+    const handleRateBook = async (bookId, value) => {
+        if (!value) return
+        const userId = order?.user?.id
+        if (!userId) {
+            setRatingMessage("Khong tim thay nguoi dung de danh gia")
+            return
+        }
+
+        setSubmittingBookId(bookId)
+        setRatingMessage("")
+
+        try {
+            await addRating(bookId, userId, value)
+            setBookRatings((prev) => ({ ...prev, [bookId]: value }))
+            setRatingMessage("Danh gia thanh cong")
+        } catch (error) {
+            setRatingMessage("Khong the danh gia luc nay. Vui long thu lai")
+        } finally {
+            setSubmittingBookId(null)
+        }
+    }
 
     const items = order?.orderDetails || []
     const subTotal = items.reduce((sum, item) => sum + (item.amount || 0) * (item.salePrice || 0), 0)
@@ -109,8 +167,11 @@ const OrderDetailUser = () => {
                     </div>
                 </div>
 
-                <div className="order-items-wrap">
+                <div className="order-items-wrap" id="rating">
                     <h4>San pham trong don</h4>
+                    {ratingMessage && (
+                        <p style={{ marginBottom: "10px", color: "#0f766e", fontWeight: 500 }}>{ratingMessage}</p>
+                    )}
                     <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 700 }} aria-label="order details table">
                             <TableHead>
@@ -119,6 +180,7 @@ const OrderDetailUser = () => {
                                     <TableCell align="right">So luong</TableCell>
                                     <TableCell align="right">Don gia</TableCell>
                                     <TableCell align="right">Thanh tien</TableCell>
+                                    <TableCell align="center">Danh gia</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -133,11 +195,46 @@ const OrderDetailUser = () => {
                                         <TableCell align="right">{(item.amount || 0).toLocaleString()}</TableCell>
                                         <TableCell align="right">{formatCurrency(item.salePrice)}</TableCell>
                                         <TableCell align="right">{formatCurrency((item.amount || 0) * (item.salePrice || 0))}</TableCell>
+                                        <TableCell align="center">
+                                            {order?.state === "COMPLETED" ? (
+                                                (() => {
+                                                    const bookId = item?.book?.id
+                                                    const currentRating = bookRatings[bookId] || 0
+                                                    const isRated = currentRating > 0
+
+                                                    if (!bookId) return <span>N/A</span>
+
+                                                    if (isRated) {
+                                                        return (
+                                                            <div>
+                                                                <Rating value={currentRating} precision={1} readOnly />
+                                                                <div style={{ fontSize: "12px", color: "#15803d" }}>Da danh gia</div>
+                                                            </div>
+                                                        )
+                                                    }
+
+                                                    return (
+                                                        <div>
+                                                            <Rating
+                                                                value={currentRating}
+                                                                precision={1}
+                                                                onChange={(event, newValue) => handleRateBook(bookId, newValue)}
+                                                            />
+                                                            {submittingBookId === bookId && (
+                                                                <div style={{ fontSize: "12px", color: "#0369a1" }}>Dang gui...</div>
+                                                            )}
+                                                        </div>
+                                                    )
+                                                })()
+                                            ) : (
+                                                <span>Chi danh gia khi don hoan tat</span>
+                                            )}
+                                        </TableCell>
                                     </TableRow>
                                 ))}
                                 {items.length === 0 && (
                                     <TableRow>
-                                        <TableCell colSpan={4} align="center">Don hang chua co san pham</TableCell>
+                                        <TableCell colSpan={5} align="center">Don hang chua co san pham</TableCell>
                                     </TableRow>
                                 )}
                             </TableBody>

@@ -54,7 +54,6 @@ const formatDate = (inputDate) => {
 }
 
 const Orders = ({ orders }) => {
-    console.log(orders)
     return (
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -84,6 +83,11 @@ const Orders = ({ orders }) => {
                             }, 30000)?.toLocaleString()}₫</StyledTableCell>
                             <StyledTableCell align="center" style={{display: 'flex'}}>
                                 <a href={`/order-detail/${order.id}`}><Button style={{fontSize: '14px'}} variant="outline-info">Chi tiết</Button></a>
+                                {order.state === 'COMPLETED' && (
+                                    <a href={`/order-detail/${order.id}#rating`}>
+                                        <Button style={{fontSize: '14px', marginLeft: '10px'}} variant="outline-warning">Đánh giá sao</Button>
+                                    </a>
+                                )}
                                 {(order.shippingState === 'NOTSHIPPING' && order.state !== 'CANCELED') && <Button onClick={() => handleCancel(order.id)} style={{fontSize: '14px', marginLeft: '10px'}} variant="outline-danger">Hủy đơn hàng</Button>}
                             </StyledTableCell>
                         </StyledTableRow>

@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Rating {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne

@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { getPostById } from '../../services/PostService';
 
 const formatDate = (inputDate) => {
+    if (!inputDate) return '--/--/----';
     var date = new Date(inputDate);
 
     var day = date.getDate();
@@ -55,7 +56,7 @@ const PostDetail = () => {
                                             <ul className="no-bullet" style={{ marginTop: '58px' }}>
                                                 {
                                                     categories.length !== 0 && categories?.map(category => (
-                                                        <li key={category.id} className={post.category.id === category.id ? 'active' : ''}>
+                                                        <li key={category.id} className={post?.category?.id === category.id ? 'active' : ''}>
                                                             <a href={`/blogs/${category.id}`} >{category.name}</a>
                                                         </li>
                                                     ))
@@ -68,7 +69,7 @@ const PostDetail = () => {
                                     <article>
                                         <div className="article-content">
                                             <div className="article-head">
-                                                <h5>{post.title}</h5>
+                                                <h5>{post?.title || 'Bài viết chưa có tiêu đề'}</h5>
                                                 <div className="article-date-author">
                                                     <div className='post-info'>
                                                         <div className="post-date me-3">
@@ -77,13 +78,32 @@ const PostDetail = () => {
                                                         </div>
                                                         <div className="post-author">
                                                             <i className="fa-solid fa-user me-1"></i>
-                                                            <span>{post?.user?.fullName}</span>
+                                                            <span>{post?.user?.fullName || 'Ẩn danh'}</span>
+                                                        </div>
+                                                        <div className="post-author" style={{ marginLeft: '12px' }}>
+                                                            <i className="fa-solid fa-folder-open me-1"></i>
+                                                            <span>{post?.category?.name || 'Chưa phân loại'}</span>
+                                                        </div>
+                                                        <div className="post-author" style={{ marginLeft: '12px' }}>
+                                                            <i className="fa-solid fa-circle-info me-1"></i>
+                                                            <span>{post?.state || 'N/A'}</span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="article-tldr"></div>
-                                            <div className="article-body" dangerouslySetInnerHTML={{__html: post?.content}}></div>
+                                            {post?.thumbnail && (
+                                                <div style={{ marginBottom: '20px' }}>
+                                                    <img
+                                                        src={post.thumbnail}
+                                                        alt={post?.title || 'thumbnail'}
+                                                        style={{ width: '100%', maxHeight: '420px', objectFit: 'contain', borderRadius: '8px', background: '#f5f5f5' }}
+                                                    />
+                                                </div>
+                                            )}
+                                            <div className="article-tldr">
+                                                <strong>Tóm tắt:</strong> {post?.brief || 'Chưa có tóm tắt'}
+                                            </div>
+                                            <div className="article-body" dangerouslySetInnerHTML={{ __html: post?.content || '<p>Chưa có nội dung</p>' }}></div>
                                         </div>
                                     </article>
                                 </Grid>

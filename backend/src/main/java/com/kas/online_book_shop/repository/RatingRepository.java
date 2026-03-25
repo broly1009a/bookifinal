@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface RatingRepository extends JpaRepository<Rating, Long> {
     Optional<Rating> findByBookAndUser(Book book, User user);
     List<Rating> findByBook(Book book);
+    Optional<Rating> findTopByOrderByIdDesc();
 }
