@@ -35,6 +35,9 @@ const ProductDetail = ({ cookies, cart, cartChange, setCartChange, profile }) =>
 
     const book_images = book.images ? book.images : []
     const book_authors = book.authors ? book.authors : []
+    const ratingAverage = Number(book?.ratingAverage ?? book?.rating ?? 0)
+    const ratingCount = Number(book?.ratingCount ?? 0)
+    const fullStars = Math.max(0, Math.min(5, Math.round(ratingAverage)))
     const book_item = book_images?.map((image, index) => {
         return (
             <Carousel.Item key={index} interval={3000}>
@@ -189,23 +192,16 @@ const ProductDetail = ({ cookies, cart, cartChange, setCartChange, profile }) =>
                                         </div>
                                         <div className='pro-rating'>
                                             <div className='starbap-prev-badge'>
-                                                <a href className='starbap-star'>
-                                                    <i className="fa-regular fa-star" style={{ color: '#d9d326' }}></i>
-                                                </a>
-                                                <a href className='starbap-star'>
-                                                    <i className="fa-regular fa-star" style={{ color: '#d9d326' }}></i>
-                                                </a>
-                                                <a href className='starbap-star'>
-                                                    <i className="fa-regular fa-star" style={{ color: '#d9d326' }}></i>
-                                                </a>
-                                                <a href className='starbap-star'>
-                                                    <i className="fa-regular fa-star" style={{ color: '#d9d326' }}></i>
-                                                </a>
-                                                <a href className='starbap-star'>
-                                                    <i className="fa-regular fa-star" style={{ color: '#d9d326' }}></i>
-                                                </a>
+                                                {Array.from({ length: 5 }).map((_, index) => (
+                                                    <span key={index} className='starbap-star'>
+                                                        <i
+                                                            className={`${index < fullStars ? 'fa-solid' : 'fa-regular'} fa-star`}
+                                                            style={{ color: '#d9d326' }}
+                                                        ></i>
+                                                    </span>
+                                                ))}
                                                 <span className='starbap-prev-badgetext'>
-                                                    0 đánh giá
+                                                    {ratingAverage.toFixed(1)} ({ratingCount} đánh giá)
                                                 </span>
                                             </div>
                                             <div className='daban'>

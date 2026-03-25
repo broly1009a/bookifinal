@@ -11,6 +11,7 @@ import com.kas.online_book_shop.model.Image;
 import com.kas.online_book_shop.repository.BookCollectionRepository;
 import com.kas.online_book_shop.repository.BookRepository;
 import com.kas.online_book_shop.repository.ImageRepository;
+import com.kas.online_book_shop.repository.RatingRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookCollectionRepository collectionRepository;
     private final ImageRepository imageRepository;
+    private final RatingRepository ratingRepository;
 
     @Override
     public Page<Book> getAllBooks(Pageable pageable) {
@@ -34,8 +36,11 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book getBookById(Long id) {
-        return bookRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sách tương ứng"));
+        var book = bookRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sách tương ứng"));
+        book.setRatingAverage(ratingRepository.getAverageByBookId(id));
+        book.setRatingCount(ratingRepository.countByBook_Id(id));
+        return book;
     }
 
     @Override

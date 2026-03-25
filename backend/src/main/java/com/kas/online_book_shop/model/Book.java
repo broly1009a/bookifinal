@@ -128,6 +128,12 @@ public class Book {
     @JsonManagedReference
     private List<Image> images;
 
+    @Transient
+    private Double ratingAverage;
+
+    @Transient
+    private Long ratingCount;
+
     public Long getSalePrice() {
         if (price != null && discount != null) {
             return (long) (price - (price * discount));
@@ -136,10 +142,28 @@ public class Book {
     }
 
     public Double getRating() {
-        if (ratings == null)
-            return null;
+        if (ratingAverage != null) {
+            return ratingAverage;
+        }
+        if (ratings == null) {
+            return 0.0;
+        }
         return ratings.stream()
                 .mapToDouble(Rating::getValue)
                 .average().orElse(0);
+    }
+
+    public Double getRatingAverage() {
+        return getRating();
+    }
+
+    public Long getRatingCount() {
+        if (ratingCount != null) {
+            return ratingCount;
+        }
+        if (ratings == null) {
+            return 0L;
+        }
+        return (long) ratings.size();
     }
 }
