@@ -7,7 +7,7 @@ const getAllPostCategories = () => {
 }
 
 const getPostByCategory = (categoryId, page) => {
-    return axios.get(API_URL + `?category=${categoryId}&page=${page-1}&size=10`);
+    return axios.get(API_URL + `?category=${categoryId}&state=PUBLISHED&page=${page-1}&size=10`);
 }
 
 const getPostById = (postId) => {
