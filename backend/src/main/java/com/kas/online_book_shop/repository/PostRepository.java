@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface PostRepository extends JpaRepository<Post, Long> {
         @Query("SELECT p FROM Post p " +
                         "WHERE (:title IS NULL OR p.title LIKE %:title%) " +
@@ -19,4 +21,16 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                         @Param("category") PostCategory category,
                         @Param("state") PostState state,
                         Pageable pageable);
+
+        @Query("SELECT p FROM Post p " +
+                        "WHERE (:title IS NULL OR p.title LIKE %:title%) " +
+                        "AND (:category IS NULL OR p.category = :category) " +
+                        "AND p.state <> :excludedState")
+        Page<Post> findByTitleContainingAndCategoryAndStateNot(
+                        @Param("title") String title,
+                        @Param("category") PostCategory category,
+                        @Param("excludedState") PostState excludedState,
+                        Pageable pageable);
+
+        List<Post> findByStateNot(PostState state);
 }

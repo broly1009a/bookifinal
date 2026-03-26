@@ -37,6 +37,9 @@ public class PostServiceImpl implements PostService {
     @Override
     public Post savePost(Post post) {
         post.setCreatedAt(LocalDateTime.now());
+        if (post.getState() == null) {
+            post.setState(PostState.DRAFT);
+        }
         return postRepository.save(post);
     }
 
@@ -45,6 +48,9 @@ public class PostServiceImpl implements PostService {
         var currentPost = postRepository.findById(post.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy post để cập nhật"));
         post.setCreatedAt(currentPost.getCreatedAt());
+        if (post.getState() == null) {
+            post.setState(currentPost.getState());
+        }
         return postRepository.save(post);
     }
 
@@ -54,12 +60,15 @@ public class PostServiceImpl implements PostService {
             PostCategory category,
             PostState state,
             Pageable pageable) {
+        if (state == null) {
+            return postRepository.findByTitleContainingAndCategoryAndStateNot(title, category, PostState.DELETED, pageable);
+        }
         return postRepository.findByTitleContainingAndCategoryAndState(title, category, state, pageable);
     }
 
     @Override
     public List<Post> getAll() {
-        return postRepository.findAll();
+        return postRepository.findByStateNot(PostState.DELETED);
     }
 
     

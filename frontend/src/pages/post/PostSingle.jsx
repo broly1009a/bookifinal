@@ -37,6 +37,9 @@ const PostSingle = () => {
         if (!data.content || data.content.trim() === '') {
             validationErrors.push('Nội dung không được để trống');
         }
+        if (!data.state) {
+            validationErrors.push('Vui lòng chọn trạng thái');
+        }
 
         if (validationErrors.length > 0) {
             setErrors(validationErrors);
@@ -69,6 +72,13 @@ const PostSingle = () => {
 
     const handleObjectChange = (e) => {
         const { name, value } = e.target;
+        if (name === "state") {
+            setData({
+                ...data,
+                state: value
+            });
+            return;
+        }
         setData({
             ...data, [name]: {
                 id: value
@@ -160,6 +170,27 @@ const PostSingle = () => {
                                     </FormControl>
                                 </Box>
                             </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <Box sx={{ maxWidth: 250 }} className='spacing'>
+                                        <FormControl fullWidth>
+                                            <InputLabel variant="standard" htmlFor="post-state-native">
+                                                State
+                                            </InputLabel>
+                                            <NativeSelect
+                                                value={data?.state || "DRAFT"}
+                                                onChange={handleObjectChange}
+                                                name="state"
+                                                inputProps={{
+                                                    id: 'post-state-native',
+                                                }}
+                                            >
+                                                <option value="DRAFT">DRAFT</option>
+                                                <option value="PUBLISHED">PUBLISHED</option>
+                                                <option value="DELETED">DELETED</option>
+                                            </NativeSelect>
+                                        </FormControl>
+                                    </Box>
+                                </Grid>
                             <Grid item xs={12} sm={12}>
                                 <textarea
                                     name="content"

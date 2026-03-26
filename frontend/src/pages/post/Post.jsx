@@ -21,9 +21,13 @@ const Post = () => {
             "Do you really want to delete this post?"
         )
         if (!confirmBox) return
-        deletePost(id).then((res) => {
-            window.location.reload()
-        })
+        deletePost(id)
+            .then(() => {
+                setData((prev) => prev.filter((post) => post.id !== id))
+            })
+            .catch(() => {
+                window.alert("Delete post failed")
+            })
     }
 
     const actionColumn = [

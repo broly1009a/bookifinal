@@ -25,6 +25,7 @@ const PostNew = () => {
         },
         brief: "",
         thumbnail: "",
+        state: "DRAFT",
         user: {
             id: ""
         }
@@ -45,6 +46,13 @@ const PostNew = () => {
 
     const handleObjectChange = (e) => {
         const { name, value } = e.target;
+        if (name === "state") {
+            setData({
+                ...data,
+                state: value
+            });
+            return;
+        }
         setData({
             ...data, [name]: {
                 id: Number(value)
@@ -77,6 +85,9 @@ const PostNew = () => {
         }
         if (!data.category.id) {
             validationErrors.push('Vui lòng chọn danh mục');
+        }
+        if (!data.state) {
+            validationErrors.push('Vui lòng chọn trạng thái');
         }
 
         if (validationErrors.length > 0) {
@@ -170,6 +181,20 @@ const PostNew = () => {
                                                     <option key={category.id} value={category.id}>{category.name}</option>
                                                 ))
                                             }
+                                        </NativeSelect>
+                                    </FormControl>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <Box sx={{ maxWidth: 250 }} className='spacing'>
+                                    <FormControl fullWidth>
+                                        <NativeSelect
+                                            value={data.state}
+                                            onChange={handleObjectChange}
+                                            name="state"
+                                        >
+                                            <option value="DRAFT">DRAFT</option>
+                                            <option value="PUBLISHED">PUBLISHED</option>
                                         </NativeSelect>
                                     </FormControl>
                                 </Box>
